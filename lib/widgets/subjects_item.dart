@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../modals/category.dart';
 import '../screens/teachers_overview_screen.dart';
+
 class SubjectItem extends StatelessWidget {
   final Category category;
   SubjectItem({@required this.category});
@@ -10,7 +11,7 @@ class SubjectItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context)
             .pushNamed(TeachersOverviewScreen.routeNamed, arguments: {
-          'categoryId': category.id,
+          'categoryName': category.subjectName,
           'imageUrl': category.imageUrl,
         });
       },

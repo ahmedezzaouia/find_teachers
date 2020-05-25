@@ -10,8 +10,7 @@ class TeacherProvider with ChangeNotifier {
         teacherImageUrl:
             'https://www.job-hunt.org/images/2018-12-21-DragonImages-AdobeStock_70698768.jpeg',
         id: 't1',
-        categoryId: ['c1', 'c3'],
-        categoryName: 'Mathematics'),
+        foundInCategoryName: 'Mathematics'),
     Teacher(
       teaherName: 'Blaise Pascal',
       teacherDescription:
@@ -19,8 +18,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://belle-imaging.com/wp-content/uploads/2018/01/Headshots-beautiful-girl-with-long-hair.jpg',
       id: 't2',
-      categoryId: ['c2', 'c3'],
-      categoryName: 'Physics',
+      foundInCategoryName: 'Physics',
     ),
     Teacher(
       teaherName: 'Enrico Fermi',
@@ -29,8 +27,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.30.jpg',
       id: 't3',
-      categoryId: ['c4', 'c2'],
-      categoryName: 'informatique',
+      foundInCategoryName: 'informatique',
     ),
     Teacher(
         teaherName: 'Ahmed Ezzaouia',
@@ -39,8 +36,7 @@ class TeacherProvider with ChangeNotifier {
         teacherImageUrl:
             'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.18.jpg',
         id: 't4',
-        categoryId: ['c4'],
-        categoryName: 'Languages'),
+        foundInCategoryName: 'Languages'),
     Teacher(
       teaherName: 'Enrico Fermi',
       teacherDescription:
@@ -48,8 +44,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://www.sprintcv.com/assets/sprintcv-helps-java-consultant-to-generate-amazing-cv-1228395647dab08deb54ccec4dd549db6477ded6803a1f00ac7fbc499b66555c.jpg',
       id: 't5',
-      categoryId: ['c1'],
-      categoryName: 'informatique',
+      foundInCategoryName: 'informatique',
     ),
     Teacher(
       teaherName: 'Ahmed Ezzaouia',
@@ -58,8 +53,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.18.jpg',
       id: 't6',
-      categoryId: ['c3', 'c2'],
-      categoryName: 'Languages',
+      foundInCategoryName: 'Languages',
     ),
     Teacher(
       teaherName: 'Enrico Fermi',
@@ -68,8 +62,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.18.jpg',
       id: 't7',
-      categoryId: ['c2', 'c2'],
-      categoryName: 'Physics',
+      foundInCategoryName: 'Physics',
     ),
     Teacher(
       teaherName: 'Ahmed Ezzaouia',
@@ -78,8 +71,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.30.jpg',
       id: 't8',
-      categoryId: ['c3'],
-      categoryName: 'informatique',
+      foundInCategoryName: 'informatique',
     ),
   ];
 
@@ -88,12 +80,19 @@ class TeacherProvider with ChangeNotifier {
   }
 
   //find by Category id
-  List<Teacher> findByCategory(String id) {
-    return _iteams.where((tech) => tech.categoryId.contains(id)).toList();
+  List<Teacher> findByCategory(String categoryName) {
+    return _iteams
+        .where((tech) => tech.foundInCategoryName == categoryName)
+        .toList();
   }
 
   //find by teacher id
   Teacher findByTeacherId(String id) {
     return _iteams.firstWhere((teach) => teach.id == id);
+  }
+
+  //get a list of Favorite items
+  List<Teacher> get getFavoriteList {
+    return _iteams.where((tech) => tech.isfavorite).toList();
   }
 }

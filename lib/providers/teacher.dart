@@ -5,15 +5,21 @@ class Teacher with ChangeNotifier {
   final String teacherDescription;
   final String teacherImageUrl;
   final String id;
-  final List<String> categoryId;
-  final String categoryName;
+  final String foundInCategoryName;
+  bool isfavorite;
 
   Teacher({
     @required this.teaherName,
     @required this.id,
     @required this.teacherDescription,
     @required this.teacherImageUrl,
-    @required this.categoryId,
-    @required this.categoryName,
+    @required this.foundInCategoryName,
+    this.isfavorite = false,
   });
+
+  void toggleFavorite() {
+    isfavorite = !isfavorite;
+    notifyListeners();
+    print('favorite = $isfavorite');
+  }
 }

@@ -8,11 +8,13 @@ class TeachersOverviewScreen extends StatelessWidget {
   static const routeNamed = 'teachers-overview';
   @override
   Widget build(BuildContext context) {
+    print('TeachersOverview screen build');
+
     final routeArguments = ModalRoute.of(context).settings.arguments as Map;
-    final categoryId = routeArguments['categoryId'];
+    final categoryName = routeArguments['categoryName'];
     final subjectImage = routeArguments['imageUrl'];
     final teach = Provider.of<TeacherProvider>(context, listen: false);
-    List<Teacher> techByCategory = teach.findByCategory(categoryId);
+    List<Teacher> techByCategory = teach.findByCategory(categoryName);
     return Scaffold(
       body: Column(
         children: <Widget>[

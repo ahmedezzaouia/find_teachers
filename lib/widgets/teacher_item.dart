@@ -45,8 +45,19 @@ class TeacherItem extends StatelessWidget {
               ),
             ),
             Expanded(
-                child: IconButton(
-                    icon: Icon(Icons.favorite_border), onPressed: () {}))
+              child: Consumer<Teacher>(
+                builder: (ctx, tech, child) => IconButton(
+                    icon: Icon(
+                      teachData.isfavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      teachData.toggleFavorite();
+                    }),
+              ),
+            )
           ],
         ),
       ),

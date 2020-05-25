@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/providers/teacher.dart';
+import 'package:provider/provider.dart';
 
 class FavoriteItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final teacher = Provider.of<Teacher>(context, listen: false);
     return Card(
       margin: EdgeInsets.all(5),
       elevation: 4.0,
@@ -15,28 +18,37 @@ class FavoriteItem extends StatelessWidget {
             children: <Widget>[
               CircleAvatar(
                 radius: 35,
-                backgroundImage: NetworkImage(
-                    'https://www.sprintcv.com/assets/sprintcv-helps-java-consultant-to-generate-amazing-cv-1228395647dab08deb54ccec4dd549db6477ded6803a1f00ac7fbc499b66555c.jpg'),
+                backgroundImage: NetworkImage(teacher.teacherImageUrl),
               ),
-              IconButton(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: 30,
-                  ),
-                  onPressed: () {})
+              Consumer<Teacher>(
+                builder: (ctx, tech, child) => IconButton(
+                    icon: teacher.isfavorite
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                            size: 30,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                    onPressed: () {
+                      teacher.toggleFavorite();
+                    }),
+              )
             ],
           ),
           SizedBox(height: 5),
           Text(
-            'Enrico Fermi',
+            teacher.teaherName,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
           ),
-          Text('Teach informatique',
+          Text('Teach ${teacher.foundInCategoryName}',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
           SizedBox(height: 5),
           Text(
-            'is an American actor,producer, and environmentalist.He has often played unconventional parts',
+            teacher.teacherDescription,
             textAlign: TextAlign.center,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,

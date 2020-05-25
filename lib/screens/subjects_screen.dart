@@ -27,6 +27,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('subjects screen build');
+
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(

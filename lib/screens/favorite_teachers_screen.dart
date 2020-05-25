@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/providers/teacher.dart';
+import 'package:maroc_teachers/providers/teacher_provider.dart';
 import 'package:maroc_teachers/widgets/favorite_item.dart';
+import 'package:provider/provider.dart';
 
 class FavoriteTeachersScreen extends StatefulWidget {
   static const routeNamed = 'favorite-teacher';
@@ -28,6 +31,9 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('favorite screen build');
+    final teachData = Provider.of<TeacherProvider>(context, listen: false);
+    List<Teacher> favoritesList = teachData.getFavoriteList;
     return Scaffold(
       appBar: AppBar(
         title: Text('favorite teachers'),
@@ -43,7 +49,7 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
               topRight: Radius.circular(25),
             )),
         child: GridView.builder(
-          itemCount: 5,
+          itemCount: favoritesList.length,
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -51,7 +57,8 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
             crossAxisSpacing: 1,
             mainAxisSpacing: 3,
           ),
-          itemBuilder: (ctx, index) => FavoriteItem(),
+          itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
+              value: favoritesList[index], child: FavoriteItem()),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

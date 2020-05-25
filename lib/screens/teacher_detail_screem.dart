@@ -8,6 +8,8 @@ class TeacherDetaillScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('teacherDetaill screen build');
+
     final teacherId = ModalRoute.of(context).settings.arguments as String;
     Teacher teacherProfil = Provider.of<TeacherProvider>(context, listen: false)
         .findByTeacherId(teacherId);
