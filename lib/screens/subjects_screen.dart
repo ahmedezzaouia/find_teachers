@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/screens/favorite_teachers_screen.dart';
 import 'package:maroc_teachers/widgets/subjects_item.dart';
 import '../modals/category.dart';
 
@@ -9,6 +10,20 @@ class SubjectsScreen extends StatefulWidget {
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
   int currentIndex = 0;
+  ontapTapped(index) {
+    print(index);
+    setState(() {
+      currentIndex = index;
+    });
+    if (currentIndex == 0) {
+      Navigator.of(context).pushReplacementNamed('/');
+    } else if (currentIndex == 1) {
+      Navigator.of(context)
+          .pushReplacementNamed(FavoriteTeachersScreen.routeNamed);
+    } else {
+      print('index 2 is taped');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,19 +65,20 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentIndex,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.grey,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home), title: Text('Home')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.favorite), title: Text('Favorite')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.supervised_user_circle),
-                title: Text('Management')),
-          ]),
+        currentIndex: currentIndex,
+        onTap: ontapTapped,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), title: Text('Favorite')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.supervised_user_circle),
+              title: Text('Management')),
+        ],
+      ),
     );
   }
 }

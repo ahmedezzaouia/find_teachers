@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/screens/favorite_teachers_screen.dart';
 import './providers/teacher_provider.dart';
 import './screens/edit_teacher_screen.dart';
 import './screens/subjects_screen.dart';
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
         routes: {
           TeachersOverviewScreen.routeNamed: (ctx) => TeachersOverviewScreen(),
           TeacherDetaillScreen.routeNamed: (ctx) => TeacherDetaillScreen(),
-          EditTeacherScreen.routeNamed:(ctx) => EditTeacherScreen()
+          EditTeacherScreen.routeNamed: (ctx) => EditTeacherScreen(),
+          FavoriteTeachersScreen.routeNamed: (ctx) => FavoriteTeachersScreen()
         },
       ),
     );

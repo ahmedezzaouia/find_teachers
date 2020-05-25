@@ -6,6 +6,7 @@ class Teacher with ChangeNotifier {
   final String teacherImageUrl;
   final String id;
   final List<String> categoryId;
+  final String categoryName;
 
   Teacher({
     @required this.teaherName,
@@ -13,5 +14,6 @@ class Teacher with ChangeNotifier {
     @required this.teacherDescription,
     @required this.teacherImageUrl,
     @required this.categoryId,
+    @required this.categoryName,
   });
 }
