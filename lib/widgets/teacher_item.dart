@@ -15,6 +15,10 @@ class TeacherItem extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.all(10),
         elevation: 4.0,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                bottomRight: Radius.circular(15))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

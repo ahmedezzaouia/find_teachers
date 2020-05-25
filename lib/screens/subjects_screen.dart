@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maroc_teachers/screens/favorite_teachers_screen.dart';
+import 'package:maroc_teachers/widgets/appdrawer.dart';
 import 'package:maroc_teachers/widgets/subjects_item.dart';
 import '../modals/category.dart';
 
@@ -28,7 +29,6 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   @override
   Widget build(BuildContext context) {
     print('subjects screen build');
-
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -37,6 +37,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         elevation: 0.0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
+      drawer: AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[

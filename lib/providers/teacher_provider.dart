@@ -95,4 +95,7 @@ class TeacherProvider with ChangeNotifier {
   List<Teacher> get getFavoriteList {
     return _iteams.where((tech) => tech.isfavorite).toList();
   }
+
+  // add teacher to iteams list
+
 }

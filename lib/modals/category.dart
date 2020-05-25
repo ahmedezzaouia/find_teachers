@@ -16,7 +16,7 @@ List<Category> categories = [
   Category(
       subjectName: 'Physics',
       categoryImage: 'assets/physics_icon.png',
-      imageUrl: 'assets/subjectImage.png'),
+      imageUrl: 'assets/physics.jpg'),
   Category(
       subjectName: 'Mathematics',
       categoryImage: 'assets/math_icon.png',
@@ -24,9 +24,9 @@ List<Category> categories = [
   Category(
       subjectName: 'informatique',
       categoryImage: 'assets/info_icon.png',
-      imageUrl: 'assets/subjectImage.png'),
+      imageUrl: 'assets/informatique.jpg'),
   Category(
       subjectName: 'Languages',
       categoryImage: 'assets/languages_icon.png',
-      imageUrl: 'assets/subjectImage.png'),
+      imageUrl: 'assets/languages.jpg'),
 ];
