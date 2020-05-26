@@ -22,7 +22,7 @@ List<Category> categories = [
       categoryImage: 'assets/math_icon.png',
       imageUrl: 'assets/subjectImage.png'),
   Category(
-      subjectName: 'informatique',
+      subjectName: 'Informatique',
       categoryImage: 'assets/info_icon.png',
       imageUrl: 'assets/informatique.jpg'),
   Category(

@@ -27,7 +27,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.30.jpg',
       id: 't3',
-      foundInCategoryName: 'informatique',
+      foundInCategoryName: 'Informatique',
     ),
     Teacher(
         teaherName: 'Ahmed Ezzaouia',
@@ -44,7 +44,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://www.sprintcv.com/assets/sprintcv-helps-java-consultant-to-generate-amazing-cv-1228395647dab08deb54ccec4dd549db6477ded6803a1f00ac7fbc499b66555c.jpg',
       id: 't5',
-      foundInCategoryName: 'informatique',
+      foundInCategoryName: 'Informatique',
     ),
     Teacher(
       teaherName: 'Ahmed Ezzaouia',
@@ -71,7 +71,7 @@ class TeacherProvider with ChangeNotifier {
       teacherImageUrl:
           'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.30.jpg',
       id: 't8',
-      foundInCategoryName: 'informatique',
+      foundInCategoryName: 'Informatique',
     ),
   ];
 
@@ -97,5 +97,15 @@ class TeacherProvider with ChangeNotifier {
   }
 
   // add teacher to iteams list
-
+  void addTeacher(Teacher teacher) {
+    Teacher teach = Teacher(
+      teaherName: teacher.teaherName,
+      id: DateTime.now().toString(),
+      teacherDescription: teacher.teacherDescription,
+      teacherImageUrl: teacher.teacherImageUrl,
+      foundInCategoryName: teacher.foundInCategoryName,
+    );
+    _iteams.add(teach);
+    notifyListeners();
+  }
 }
