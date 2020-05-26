@@ -108,4 +108,15 @@ class TeacherProvider with ChangeNotifier {
     _iteams.add(teach);
     notifyListeners();
   }
+
+  // delete teacher item from the list
+  void deleteTeacher(String id) {
+    int teacherIndex = _iteams.indexWhere((teach) => teach.id == id);
+    Teacher existingTeacherItem = _iteams[teacherIndex];
+    if (teacherIndex >= 0) {
+      _iteams.remove(existingTeacherItem);
+      print('remove the item');
+    }
+    notifyListeners();
+  }
 }

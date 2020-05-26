@@ -9,8 +9,7 @@ class TeacherManagementScreen extends StatelessWidget {
   static const routeNamed = 'teacher-management';
   @override
   Widget build(BuildContext context) {
-    final teachData = Provider.of<TeacherProvider>(context);
-
+    print('Teacher managment screen build');
     return Scaffold(
       appBar: AppBar(
         title: Text('Teacher Management'),
@@ -40,11 +39,13 @@ class TeacherManagementScreen extends StatelessWidget {
             topRight: Radius.circular(25),
           ),
         ),
-        child: ListView.builder(
-          itemCount: teachData.iteams.length,
-          itemBuilder: (BuildContext context, int index) =>
-              TeacherManagementItem(
-            teach: teachData.iteams[index],
+        child: Consumer<TeacherProvider>(
+          builder: (ctx, teach, child) => ListView.builder(
+            itemCount: teach.iteams.length,
+            itemBuilder: (BuildContext context, int index) =>
+                TeacherManagementItem(
+              teach: teach.iteams[index],
+            ),
           ),
         ),
       ),
