@@ -30,7 +30,7 @@ class TeacherDetaillScreen extends StatelessWidget {
             style: TextStyle(color: Colors.white, fontSize: 30),
           ),
           Text(
-            'Teach :${teacherProfil.foundInCategoryName}',
+            'Teach :${teacherProfil.teachingSubject}',
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           Text(teacherProfil.teacherDescription,

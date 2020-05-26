@@ -29,7 +29,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
     id: null,
     teacherDescription: '',
     teacherImageUrl: '',
-    foundInCategoryName: '',
+    teachingSubject: '',
   );
 
   @override
@@ -104,6 +104,8 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                     labelText: 'Name :',
                     fillColor: Colors.white,
                     filled: true,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15)),
                   ),
                   keyboardType: TextInputType.text,
                   onSaved: (value) {
@@ -112,7 +114,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                       id: null,
                       teacherDescription: _onEditeTeacher.teacherDescription,
                       teacherImageUrl: _onEditeTeacher.teacherImageUrl,
-                      foundInCategoryName: _onEditeTeacher.foundInCategoryName,
+                      teachingSubject: _onEditeTeacher.teachingSubject,
                     );
                   },
                   validator: (value) =>
@@ -126,7 +128,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                     height: 50,
                     decoration: BoxDecoration(
                         color: isNothingSelect ? Colors.red : Colors.white,
-                        borderRadius: BorderRadius.circular(30)),
+                        borderRadius: BorderRadius.circular(15)),
                     child: DropdownButton<String>(
                       value: _selectedSubject,
                       elevation: 7,
@@ -159,7 +161,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                         width: 95,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Colors.lightBlue,
+                          color: Colors.amber,
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: _imageUrlController.text.isEmpty
@@ -176,6 +178,8 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                           labelText: 'ImageUrl :',
                           fillColor: Colors.white,
                           filled: true,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
                         ),
                         keyboardType: TextInputType.text,
                         focusNode: _imageUrlFocusNode,
@@ -187,8 +191,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                             teacherDescription:
                                 _onEditeTeacher.teacherDescription,
                             teacherImageUrl: value,
-                            foundInCategoryName:
-                                _onEditeTeacher.foundInCategoryName,
+                            teachingSubject: _onEditeTeacher.teachingSubject,
                           );
                         },
                         validator: (value) =>
@@ -203,6 +206,8 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                     labelText: 'About :',
                     fillColor: Colors.white,
                     filled: true,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15)),
                   ),
                   maxLines: 8,
                   keyboardType: TextInputType.multiline,
@@ -212,7 +217,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                       id: null,
                       teacherDescription: value,
                       teacherImageUrl: _onEditeTeacher.teacherImageUrl,
-                      foundInCategoryName: _selectedSubject,
+                      teachingSubject: _selectedSubject,
                     );
                   },
                   validator: (value) {

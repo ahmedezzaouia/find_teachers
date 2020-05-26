@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/screens/edit_teacher_screen.dart';
+import '../screens/teacher_management_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -18,13 +18,26 @@ class AppDrawer extends StatelessWidget {
               fit: BoxFit.cover,
               width: double.infinity,
             ),
-            buildListTile(Icons.supervised_user_circle, 'User Management', () {
-              Navigator.of(context).pushNamed(EditTeacherScreen.routeNamed);
-            }),
+            buildListTile(
+              Icons.supervised_user_circle,
+              'User Management',
+              () {
+                Navigator.of(context)
+                    .pushNamed(TeacherManagementScreen.routeNamed);
+              },
+            ),
             Divider(color: Colors.white, height: 1),
             buildListTile(Icons.favorite, 'My Favorites', () {}),
             Divider(color: Colors.white, height: 1),
             buildListTile(Icons.chat_bubble, 'Chat', () {}),
+            Divider(color: Colors.white, height: 1),
+            buildListTile(
+              Icons.home,
+              'Home',
+              () {
+                Navigator.of(context).pushReplacementNamed('/');
+              },
+            ),
             Divider(color: Colors.white, height: 1),
           ],
         ),

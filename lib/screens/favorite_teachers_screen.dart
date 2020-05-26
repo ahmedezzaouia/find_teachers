@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/providers/teacher.dart';
-import 'package:maroc_teachers/providers/teacher_provider.dart';
-import 'package:maroc_teachers/widgets/favorite_item.dart';
+import '../providers/teacher.dart';
+import '../providers/teacher_provider.dart';
+import '../screens/teacher_management_screen.dart';
+import '../widgets/favorite_item.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteTeachersScreen extends StatefulWidget {
@@ -25,7 +26,8 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
           FavoriteTeachersScreen.routeNamed,
           arguments: ontapTapped);
     } else {
-      print('index 2 is taped');
+      Navigator.of(context)
+          .pushReplacementNamed(TeacherManagementScreen.routeNamed);
     }
   }
 

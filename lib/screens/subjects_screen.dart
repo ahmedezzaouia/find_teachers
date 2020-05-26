@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/screens/favorite_teachers_screen.dart';
-import 'package:maroc_teachers/widgets/appdrawer.dart';
-import 'package:maroc_teachers/widgets/subjects_item.dart';
+import './favorite_teachers_screen.dart';
+import './teacher_management_screen.dart';
+import '../widgets/appdrawer.dart';
+import '../widgets/subjects_item.dart';
 import '../modals/category.dart';
 
 class SubjectsScreen extends StatefulWidget {
@@ -22,7 +23,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
       Navigator.of(context)
           .pushReplacementNamed(FavoriteTeachersScreen.routeNamed);
     } else {
-      print('index 2 is taped');
+      Navigator.of(context)
+          .pushReplacementNamed(TeacherManagementScreen.routeNamed);
     }
   }
 

@@ -5,7 +5,7 @@ class Teacher with ChangeNotifier {
   final String teacherDescription;
   final String teacherImageUrl;
   final String id;
-  final String foundInCategoryName;
+  final String teachingSubject;
   bool isfavorite;
 
   Teacher({
@@ -13,7 +13,7 @@ class Teacher with ChangeNotifier {
     @required this.id,
     @required this.teacherDescription,
     @required this.teacherImageUrl,
-    @required this.foundInCategoryName,
+    @required this.teachingSubject,
     this.isfavorite = false,
   });
 
