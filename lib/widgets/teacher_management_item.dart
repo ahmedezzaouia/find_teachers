@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../providers/teacher.dart';
 import '../providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:maroc_teachers/screens/edit_teacher_screen.dart';
 
 class TeacherManagementItem extends StatelessWidget {
   final Teacher teach;
@@ -52,7 +53,11 @@ class TeacherManagementItem extends StatelessWidget {
                 children: <Widget>[
                   IconButton(
                     icon: Icon(Icons.edit),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                          EditTeacherScreen.routeNamed,
+                          arguments: teach.id);
+                    },
                   ),
                   IconButton(
                       icon: Icon(Icons.delete),

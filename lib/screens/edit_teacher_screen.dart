@@ -14,6 +14,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool isinit = true;
   String _selectedSubject;
   bool isNothingSelect = false;
 
@@ -33,17 +34,32 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
   );
 
   @override
+  void initState() {
+    _imageUrlFocusNode.addListener(updateImageUrl);
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (isinit) {
+      final teacherId = ModalRoute.of(context).settings.arguments as String;
+      if (teacherId != null) {
+        _onEditeTeacher =
+            Provider.of<TeacherProvider>(context).findByTeacherId(teacherId);
+        _imageUrlController.text = _onEditeTeacher.teacherImageUrl;
+        _selectedSubject = _onEditeTeacher.teachingSubject;
+      }
+    }
+    isinit = false;
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _imageUrlFocusNode.dispose();
     _imageUrlController.dispose();
     _imageUrlFocusNode.removeListener(updateImageUrl);
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    _imageUrlFocusNode.addListener(updateImageUrl);
-    super.initState();
   }
 
   updateImageUrl() {
@@ -69,10 +85,14 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
     if (!isValid) {
       return;
     }
-
     _formKey.currentState.save();
+    if (_onEditeTeacher.id == null) {
+      Provider.of<TeacherProvider>(context, listen: false)
+          .addTeacher(_onEditeTeacher);
+    } else {}
     Provider.of<TeacherProvider>(context, listen: false)
-        .addTeacher(_onEditeTeacher);
+        .updateTeacher(_onEditeTeacher, _onEditeTeacher.id);
+
     Navigator.of(context).pop();
   }
 
@@ -100,6 +120,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
             child: ListView(
               children: <Widget>[
                 TextFormField(
+                  initialValue: _onEditeTeacher.teaherName,
                   decoration: InputDecoration(
                     labelText: 'Name :',
                     fillColor: Colors.white,
@@ -111,7 +132,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                   onSaved: (value) {
                     _onEditeTeacher = Teacher(
                       teaherName: value,
-                      id: null,
+                      id: _onEditeTeacher.id,
                       teacherDescription: _onEditeTeacher.teacherDescription,
                       teacherImageUrl: _onEditeTeacher.teacherImageUrl,
                       teachingSubject: _onEditeTeacher.teachingSubject,
@@ -187,7 +208,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                         onSaved: (value) {
                           _onEditeTeacher = Teacher(
                             teaherName: _onEditeTeacher.teaherName,
-                            id: null,
+                            id: _onEditeTeacher.id,
                             teacherDescription:
                                 _onEditeTeacher.teacherDescription,
                             teacherImageUrl: value,
@@ -202,6 +223,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                 ),
                 SizedBox(height: 20),
                 TextFormField(
+                  initialValue: _onEditeTeacher.teacherDescription,
                   decoration: InputDecoration(
                     labelText: 'About :',
                     fillColor: Colors.white,
@@ -214,17 +236,15 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                   onSaved: (value) {
                     _onEditeTeacher = Teacher(
                       teaherName: _onEditeTeacher.teaherName,
-                      id: null,
+                      id: _onEditeTeacher.id,
                       teacherDescription: value,
-                      teacherImageUrl: _onEditeTeacher.teacherImageUrl,
+                      teacherImageUrl: _imageUrlController.text,
                       teachingSubject: _selectedSubject,
                     );
                   },
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'please enter a Description';
-                    } else if (value.length <= 100) {
-                      return 'should enter more than 3 lines .';
                     } else if (value.length >= 500) {
                       return 'you enter more than 5 lines,should enter less.';
                     }

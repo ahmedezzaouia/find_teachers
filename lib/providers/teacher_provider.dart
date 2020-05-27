@@ -119,4 +119,13 @@ class TeacherProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  //update teacher iteam
+  void updateTeacher(Teacher updateTeacher, String id) {
+    int teacherIndex = _iteams.indexWhere((teach) => teach.id == id);
+    if (teacherIndex >= 0) {
+      _iteams[teacherIndex] = updateTeacher;
+      notifyListeners();
+    }
+  }
 }
