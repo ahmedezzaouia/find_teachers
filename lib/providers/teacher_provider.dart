@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:maroc_teachers/http_exceptions/http_exception.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
+import 'package:http/http.dart' as http;
 
 class TeacherProvider with ChangeNotifier {
   List<Teacher> _iteams = [
-    Teacher(
+    /*Teacher(
         teaherName: 'Leonardo Dicaprio',
         teacherDescription:
             'is an American actor,producer, and environmentalist.He has often played unconventional parts',
@@ -72,7 +76,7 @@ class TeacherProvider with ChangeNotifier {
           'https://alexstudio.ch/wp-content/uploads/2019/01/business.portrait.cv_.resume.geneva.30.jpg',
       id: 't8',
       teachingSubject: 'Informatique',
-    ),
+    ),*/
   ];
 
   List<Teacher> get iteams {
@@ -97,35 +101,103 @@ class TeacherProvider with ChangeNotifier {
   }
 
   // add teacher to iteams list
-  void addTeacher(Teacher teacher) {
-    Teacher teach = Teacher(
-      teaherName: teacher.teaherName,
-      id: DateTime.now().toString(),
-      teacherDescription: teacher.teacherDescription,
-      teacherImageUrl: teacher.teacherImageUrl,
-      teachingSubject: teacher.teachingSubject,
-    );
-    _iteams.add(teach);
-    notifyListeners();
+  Future<void> addTeacher(Teacher teacher) async {
+    const url = 'https://findteachers-e06f1.firebaseio.com/teachers.json';
+    try {
+      http.Response response = await http.post(url,
+          body: jsonEncode(
+            {
+              'teaherName': teacher.teaherName,
+              'teacherDescription': teacher.teacherDescription,
+              'teacherImageUrl': teacher.teacherImageUrl,
+              'teachingSubject': teacher.teachingSubject,
+            },
+          ));
+      print(' the result is ${response.body}');
+      print(' the status is ${response.statusCode}');
+      Teacher teach = Teacher(
+        teaherName: teacher.teaherName,
+        id: jsonDecode(response.body)['name'],
+        teacherDescription: teacher.teacherDescription,
+        teacherImageUrl: teacher.teacherImageUrl,
+        teachingSubject: teacher.teachingSubject,
+      );
+      _iteams.add(teach);
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
   }
 
   // delete teacher item from the list
-  void deleteTeacher(String id) {
+  Future<void> deleteTeacher(String id) async {
+    final url = 'https://findteachers-e06f1.firebaseio.com/teachers/$id.json';
     int teacherIndex = _iteams.indexWhere((teach) => teach.id == id);
     Teacher existingTeacherItem = _iteams[teacherIndex];
     if (teacherIndex >= 0) {
       _iteams.remove(existingTeacherItem);
       print('remove the item');
+      notifyListeners();
     }
-    notifyListeners();
+    http.Response response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _iteams.insert(teacherIndex, existingTeacherItem);
+      notifyListeners();
+    }
+    existingTeacherItem = null;
   }
 
   //update teacher iteam
-  void updateTeacher(Teacher updateTeacher, String id) {
-    int teacherIndex = _iteams.indexWhere((teach) => teach.id == id);
-    if (teacherIndex >= 0) {
-      _iteams[teacherIndex] = updateTeacher;
-      notifyListeners();
+  Future<void> updateTeacher(Teacher updateTeacher, String id) async {
+    final url = 'https://findteachers-e06f1.firebaseio.com/teachers/$id.json';
+    try {
+      http.Response response = await http.patch(
+        url,
+        body: jsonEncode(
+          {
+            'teaherName': updateTeacher.teaherName,
+            'teacherDescription': updateTeacher.teacherDescription,
+            'teacherImageUrl': updateTeacher.teacherImageUrl,
+            'teachingSubject': updateTeacher.teachingSubject,
+          },
+        ),
+      );
+      print('the statue in update method is ${response.statusCode}');
+      if (response.statusCode >= 400) {
+        throw HttpException('could not update the iteam');
+      } else {
+        int teacherIndex = _iteams.indexWhere((teach) => teach.id == id);
+        if (teacherIndex >= 0) {
+          _iteams[teacherIndex] = updateTeacher;
+          notifyListeners();
+        }
+      }
+    } catch (error) {
+      throw error;
     }
+  }
+
+  // get the data (list of teachers) from firebase server
+  Future<void> getAndSetdata() async {
+    const url = 'https://findteachers-e06f1.firebaseio.com/teachers.json';
+
+    http.Response response = await http.get(url);
+    final teachersInServer = jsonDecode(response.body) as Map<String, dynamic>;
+    List<Teacher> loadingTeachersList = [];
+    teachersInServer.forEach(
+      (teacherId, teacherData) {
+        Teacher teach = Teacher(
+          teaherName: teacherData['teaherName'],
+          id: teacherId,
+          teacherDescription: teacherData['teacherDescription'],
+          teacherImageUrl: teacherData['teacherImageUrl'],
+          teachingSubject: teacherData['teachingSubject'],
+        );
+        loadingTeachersList.add(teach);
+      },
+    );
+    _iteams = loadingTeachersList;
+    notifyListeners();
+    print(jsonDecode(response.body));
   }
 }
