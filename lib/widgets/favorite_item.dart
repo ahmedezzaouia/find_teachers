@@ -39,8 +39,8 @@ class FavoriteItem extends StatelessWidget {
                               color: Colors.red,
                               size: 30,
                             ),
-                      onPressed: () {
-                        teacher.toggleFavorite();
+                      onPressed: ()async {
+                        await teacher.toggleFavorite();
                       }),
                 )
               ],

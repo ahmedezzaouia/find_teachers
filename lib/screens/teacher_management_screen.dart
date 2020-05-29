@@ -40,7 +40,9 @@ class TeacherManagementScreen extends StatelessWidget {
           ),
         ),
         child: Consumer<TeacherProvider>(
-          builder: (ctx, teach, child) => ListView.builder(
+          builder: (ctx, teach, child) => teach.iteams.length == 0
+                      ? Center(child: CircularProgressIndicator())
+                      : ListView.builder(
             itemCount: teach.iteams.length,
             itemBuilder: (BuildContext context, int index) =>
                 TeacherManagementItem(

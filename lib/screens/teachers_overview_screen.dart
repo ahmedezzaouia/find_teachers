@@ -4,8 +4,15 @@ import '../widgets/teacher_item.dart';
 import '../providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
 
-class TeachersOverviewScreen extends StatelessWidget {
+class TeachersOverviewScreen extends StatefulWidget {
   static const routeNamed = 'teachers-overview';
+
+  @override
+  _TeachersOverviewScreenState createState() => _TeachersOverviewScreenState();
+}
+
+class _TeachersOverviewScreenState extends State<TeachersOverviewScreen> {
+  bool isLoad = false;
   @override
   Widget build(BuildContext context) {
     print('TeachersOverview screen build');
@@ -13,8 +20,9 @@ class TeachersOverviewScreen extends StatelessWidget {
     final routeArguments = ModalRoute.of(context).settings.arguments as Map;
     final categoryName = routeArguments['categoryName'];
     final subjectImage = routeArguments['imageUrl'];
-    final teach = Provider.of<TeacherProvider>(context, listen: false);
+    final teach = Provider.of<TeacherProvider>(context);
     List<Teacher> techByCategory = teach.findByCategory(categoryName);
+
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -52,13 +60,17 @@ class TeachersOverviewScreen extends StatelessWidget {
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: techByCategory.length,
-                    itemBuilder: (BuildContext context, int index) =>
-                        ChangeNotifierProvider.value(
-                            value: techByCategory[index], child: TeacherItem()),
-                  ),
+                  child: techByCategory.length == 0
+                      ? Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: teach.findByCategory(categoryName).length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                ChangeNotifierProvider.value(
+                                    value: teach.findByCategory(categoryName)[index],
+                                    child: TeacherItem()),
+                          ),
+                        
                 ),
               ),
             )

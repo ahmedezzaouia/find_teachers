@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/providers/teacher_provider.dart';
+import '../providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
 import './favorite_teachers_screen.dart';
 import './teacher_management_screen.dart';
@@ -32,9 +32,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     Future.delayed(Duration.zero).then(
-      (value) {
+      (_) {
         Provider.of<TeacherProvider>(context, listen: false).getAndSetdata();
       },
     );

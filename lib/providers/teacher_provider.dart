@@ -180,11 +180,19 @@ class TeacherProvider with ChangeNotifier {
   // get the data (list of teachers) from firebase server
   Future<void> getAndSetdata() async {
     const url = 'https://findteachers-e06f1.firebaseio.com/teachers.json';
+    const urlfav = 'https://findteachers-e06f1.firebaseio.com/favorites.json';
 
     http.Response response = await http.get(url);
-    final teachersInServer = jsonDecode(response.body) as Map<String, dynamic>;
+    http.Response favoritesResponse = await http.get(urlfav);
+
+    final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
+    final extractfavorites =
+        jsonDecode(favoritesResponse.body) as Map<String, dynamic>;
     List<Teacher> loadingTeachersList = [];
-    teachersInServer.forEach(
+    if (extractedData == null) {
+      return;
+    }
+    extractedData.forEach(
       (teacherId, teacherData) {
         Teacher teach = Teacher(
           teaherName: teacherData['teaherName'],
@@ -192,6 +200,9 @@ class TeacherProvider with ChangeNotifier {
           teacherDescription: teacherData['teacherDescription'],
           teacherImageUrl: teacherData['teacherImageUrl'],
           teachingSubject: teacherData['teachingSubject'],
+          isfavorite: extractfavorites == null
+              ? false
+              : extractfavorites[teacherId] ?? false,
         );
         loadingTeachersList.add(teach);
       },

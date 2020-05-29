@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 
 class Teacher with ChangeNotifier {
   final String teaherName;
@@ -17,9 +20,21 @@ class Teacher with ChangeNotifier {
     this.isfavorite = false,
   });
 
-  void toggleFavorite() {
+  Future<void> toggleFavorite() async {
+    final url = 'https://findteachers-e06f1.firebaseio.com/favorites/$id.json';
+    bool oldStatus = isfavorite;
     isfavorite = !isfavorite;
     notifyListeners();
-    print('favorite = $isfavorite');
+    try {
+      http.Response response =
+          await http.put(url, body: jsonEncode(isfavorite));
+      if (response.statusCode >= 400) {
+        isfavorite = oldStatus;
+        notifyListeners();
+      }
+    } catch (e) {
+      isfavorite = oldStatus;
+      notifyListeners();
+    }
   }
 }

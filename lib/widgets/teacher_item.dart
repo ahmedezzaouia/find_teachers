@@ -57,8 +57,8 @@ class TeacherItem extends StatelessWidget {
                           : Icons.favorite_border,
                       color: Colors.red,
                     ),
-                    onPressed: () {
-                      teachData.toggleFavorite();
+                    onPressed: ()async {
+                     await teachData.toggleFavorite();
                     }),
               ),
             )
