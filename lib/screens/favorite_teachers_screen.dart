@@ -6,7 +6,7 @@ import '../widgets/favorite_item.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteTeachersScreen extends StatefulWidget {
-  static const routeNamed = 'favorite-teacher';
+  static const routeNamed = '/favorite-teacher';
 
   @override
   _FavoriteTeachersScreenState createState() => _FavoriteTeachersScreenState();

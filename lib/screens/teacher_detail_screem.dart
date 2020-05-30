@@ -4,7 +4,7 @@ import 'package:maroc_teachers/providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
 
 class TeacherDetaillScreen extends StatelessWidget {
-  static const routeNamed = 'teacher-detaill';
+  static const routeNamed = '/teacher-detaill';
 
   @override
   Widget build(BuildContext context) {

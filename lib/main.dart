@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/screens/favorite_teachers_screen.dart';
-import 'package:maroc_teachers/screens/teacher_management_screen.dart';
+import './screens/subjects_screen.dart';
+import './screens/auth_screen.dart';
+import './screens/favorite_teachers_screen.dart';
+import './screens/teacher_management_screen.dart';
 import './providers/teacher_provider.dart';
 import './screens/edit_teacher_screen.dart';
-import './screens/subjects_screen.dart';
 import './screens/teacher_detail_screem.dart';
 import 'package:provider/provider.dart';
 import './screens/teachers_overview_screen.dart';
+import 'package:maroc_teachers/providers/auth.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,23 +21,30 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: TeacherProvider()),
+        ChangeNotifierProvider.value(value: Auth())
       ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Color(0xFF020251),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+          title: 'maroc teachers',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            scaffoldBackgroundColor: Color(0xFF020251),
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          home: auth.isAuth ? SubjectsScreen() : AuthScreen(),
+          routes: {
+            TeachersOverviewScreen.routeNamed: (context) =>
+                TeachersOverviewScreen(),
+            TeacherDetaillScreen.routeNamed: (context) =>
+                TeacherDetaillScreen(),
+            EditTeacherScreen.routeNamed: (context) => EditTeacherScreen(),
+            FavoriteTeachersScreen.routeNamed: (context) =>
+                FavoriteTeachersScreen(),
+            TeacherManagementScreen.routeNamed: (context) =>
+                TeacherManagementScreen(),
+          },
         ),
-        home: SubjectsScreen(),
-        routes: {
-          TeachersOverviewScreen.routeNamed: (ctx) => TeachersOverviewScreen(),
-          TeacherDetaillScreen.routeNamed: (ctx) => TeacherDetaillScreen(),
-          EditTeacherScreen.routeNamed: (ctx) => EditTeacherScreen(),
-          FavoriteTeachersScreen.routeNamed: (ctx) => FavoriteTeachersScreen(),
-          TeacherManagementScreen.routeNamed: (ctx) => TeacherManagementScreen()
-        },
       ),
     );
   }

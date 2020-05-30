@@ -6,7 +6,7 @@ import '../widgets/teacher_management_item.dart';
 import 'package:provider/provider.dart';
 
 class TeacherManagementScreen extends StatelessWidget {
-  static const routeNamed = 'teacher-management';
+  static const routeNamed = '/teacher-management';
   @override
   Widget build(BuildContext context) {
     print('Teacher managment screen build');
@@ -41,14 +41,14 @@ class TeacherManagementScreen extends StatelessWidget {
         ),
         child: Consumer<TeacherProvider>(
           builder: (ctx, teach, child) => teach.iteams.length == 0
-                      ? Center(child: CircularProgressIndicator())
-                      : ListView.builder(
-            itemCount: teach.iteams.length,
-            itemBuilder: (BuildContext context, int index) =>
-                TeacherManagementItem(
-              teach: teach.iteams[index],
-            ),
-          ),
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  itemCount: teach.iteams.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      TeacherManagementItem(
+                    teach: teach.iteams[index],
+                  ),
+                ),
         ),
       ),
     );

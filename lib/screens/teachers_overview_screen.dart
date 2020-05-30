@@ -5,7 +5,7 @@ import '../providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
 
 class TeachersOverviewScreen extends StatefulWidget {
-  static const routeNamed = 'teachers-overview';
+  static const routeNamed = '/teachers-overview';
 
   @override
   _TeachersOverviewScreenState createState() => _TeachersOverviewScreenState();
@@ -63,14 +63,14 @@ class _TeachersOverviewScreenState extends State<TeachersOverviewScreen> {
                   child: techByCategory.length == 0
                       ? Center(child: CircularProgressIndicator())
                       : ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: teach.findByCategory(categoryName).length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                ChangeNotifierProvider.value(
-                                    value: teach.findByCategory(categoryName)[index],
-                                    child: TeacherItem()),
-                          ),
-                        
+                          shrinkWrap: true,
+                          itemCount: teach.findByCategory(categoryName).length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              ChangeNotifierProvider.value(
+                                  value:
+                                      teach.findByCategory(categoryName)[index],
+                                  child: TeacherItem()),
+                        ),
                 ),
               ),
             )

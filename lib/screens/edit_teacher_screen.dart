@@ -4,7 +4,7 @@ import 'package:maroc_teachers/providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
 
 class EditTeacherScreen extends StatefulWidget {
-  static const routeNamed = 'edit-teacher';
+  static const routeNamed = '/edit-teacher';
 
   @override
   _EditTeacherScreenState createState() => _EditTeacherScreenState();
