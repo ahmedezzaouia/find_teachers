@@ -13,20 +13,14 @@ class SubjectsScreen extends StatefulWidget {
 }
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
-  int currentIndex = 0;
-  ontapTapped(index) {
+  void ontapTapped(index) {
     print(index);
-    setState(() {
-      currentIndex = index;
-    });
-    if (currentIndex == 0) {
+    if (index == 0) {
       Navigator.of(context).pushReplacementNamed('/');
-    } else if (currentIndex == 1) {
-      Navigator.of(context)
-          .pushReplacementNamed(FavoriteTeachersScreen.routeNamed);
+    } else if (index == 1) {
+      Navigator.of(context).pushNamed(FavoriteTeachersScreen.routeNamed);
     } else {
-      Navigator.of(context)
-          .pushReplacementNamed(TeacherManagementScreen.routeNamed);
+      Navigator.of(context).pushNamed(TeacherManagementScreen.routeNamed);
     }
   }
 
@@ -82,7 +76,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: 0,
         onTap: ontapTapped,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         selectedItemColor: Colors.white,

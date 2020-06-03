@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/providers/auth.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
 import 'package:maroc_teachers/screens/teacher_detail_screem.dart';
 import 'package:provider/provider.dart';
@@ -39,8 +40,11 @@ class FavoriteItem extends StatelessWidget {
                               color: Colors.red,
                               size: 30,
                             ),
-                      onPressed: ()async {
-                        await teacher.toggleFavorite();
+                      onPressed: () async {
+                        await teacher.toggleFavorite(
+                          Provider.of<Auth>(context, listen: false).userId,
+                          Provider.of<Auth>(context, listen: false).token,
+                        );
                       }),
                 )
               ],

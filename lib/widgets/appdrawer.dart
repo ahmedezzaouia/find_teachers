@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/screens/auth_screen.dart';
+import 'package:maroc_teachers/screens/favorite_teachers_screen.dart';
 import '../screens/teacher_management_screen.dart';
+import 'package:maroc_teachers/providers/auth.dart';
+import 'package:provider/provider.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -27,17 +31,21 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             Divider(color: Colors.white, height: 1),
-            buildListTile(Icons.favorite, 'My Favorites', () {}),
+            buildListTile(Icons.favorite, 'My Favorites', () {
+              Navigator.of(context)
+                  .pushReplacementNamed(FavoriteTeachersScreen.routeNamed);
+            }),
             Divider(color: Colors.white, height: 1),
             buildListTile(Icons.chat_bubble, 'Chat', () {}),
             Divider(color: Colors.white, height: 1),
-            buildListTile(
-              Icons.home,
-              'Home',
-              () {
-                Navigator.of(context).pushReplacementNamed('/');
-              },
-            ),
+            buildListTile(Icons.home, 'Home', () {
+              Navigator.of(context).pushReplacementNamed('/');
+            }),
+            Divider(color: Colors.white, height: 1),
+            buildListTile(Icons.exit_to_app, 'Log Out', () async {
+              await Provider.of<Auth>(context, listen: false).logOut();
+              Navigator.of(context).pop();
+            }),
             Divider(color: Colors.white, height: 1),
           ],
         ),

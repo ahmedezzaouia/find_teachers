@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/providers/auth.dart';
 import '../screens/teacher_detail_screem.dart';
 import '../providers/teacher.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +24,16 @@ class TeacherItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             SizedBox(width: 5),
-            CircleAvatar(
-              backgroundImage: NetworkImage(teachData.teacherImageUrl),
-              radius: 35,
+            ClipOval(
+              child: FadeInImage(
+                placeholder: AssetImage('assets/profile_placeholder.png'),
+                image: NetworkImage(
+                  teachData.teacherImageUrl,
+                ),
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,
+              ),
             ),
             SizedBox(width: 10),
             Expanded(
@@ -57,8 +65,11 @@ class TeacherItem extends StatelessWidget {
                           : Icons.favorite_border,
                       color: Colors.red,
                     ),
-                    onPressed: ()async {
-                     await teachData.toggleFavorite();
+                    onPressed: () async {
+                      await teachData.toggleFavorite(
+                        Provider.of<Auth>(context, listen: false).userId,
+                        Provider.of<Auth>(context, listen: false).token,
+                      );
                     }),
               ),
             )

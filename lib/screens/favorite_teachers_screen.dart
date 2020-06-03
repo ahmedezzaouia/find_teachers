@@ -13,15 +13,11 @@ class FavoriteTeachersScreen extends StatefulWidget {
 }
 
 class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
-  int currentIndex = 1;
   ontapTapped(index) {
     print(index);
-    setState(() {
-      currentIndex = index;
-    });
-    if (currentIndex == 0) {
+    if (index == 0) {
       Navigator.of(context).pushReplacementNamed('/');
-    } else if (currentIndex == 1) {
+    } else if (index == 1) {
       Navigator.of(context).pushReplacementNamed(
           FavoriteTeachersScreen.routeNamed,
           arguments: ontapTapped);
@@ -31,16 +27,35 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
     }
   }
 
+  Consumer<TeacherProvider> buildConsumer() {
+    return Consumer<TeacherProvider>(
+      builder: (ctx, teach, _) => GridView.builder(
+          itemCount: teach.getFavoriteList.length,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1,
+            crossAxisSpacing: 1,
+            mainAxisSpacing: 3,
+          ),
+          itemBuilder: (ctx, index) {
+            Teacher teacher = teach.getFavoriteList[index];
+            return ChangeNotifierProvider.value(
+                value: teacher, child: FavoriteItem());
+          }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     print('favorite screen build');
     final teachData = Provider.of<TeacherProvider>(context, listen: false);
-    List<Teacher> favoritesList = teachData.getFavoriteList;
     return Scaffold(
       appBar: AppBar(
         title: Text('favorite teachers'),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0.0,
       ),
       body: Container(
         margin: EdgeInsets.only(top: 25),
@@ -50,21 +65,34 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
               topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             )),
-        child: GridView.builder(
-          itemCount: favoritesList.length,
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1,
-            crossAxisSpacing: 1,
-            mainAxisSpacing: 3,
-          ),
-          itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
-              value: favoritesList[index], child: FavoriteItem()),
-        ),
+        child: teachData.getFavoriteList.length != 0
+            ? buildConsumer()
+            : FutureBuilder<String>(
+                future: teachData.checkFavorites(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  print('no favorite items ${snapshot.data}');
+
+                  if (snapshot.data.contains('null')) {
+                    print('no favorite items ${snapshot.data}');
+                    return Center(
+                        child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        'add your Favorites teachers here.',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ));
+                  }
+
+                  return buildConsumer();
+                }),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: 1,
         onTap: ontapTapped,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         selectedItemColor: Colors.white,

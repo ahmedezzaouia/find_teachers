@@ -129,6 +129,7 @@ class _AuthCardState extends State<AuthCard> {
       }
       _showMessageDialog(errorMessage);
     } catch (error) {
+      print('catch error : ${error.toString()}');
       var errorMessage = 'could not authenticate you, please try again.';
       _showMessageDialog(errorMessage);
     }
@@ -168,6 +169,7 @@ class _AuthCardState extends State<AuthCard> {
                             borderRadius: BorderRadius.circular(10)),
                       ),
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
                       validator: (value) {
                         if (value.isEmpty || !value.contains('@')) {
                           return 'Invalid email';
