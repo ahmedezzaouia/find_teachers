@@ -4,11 +4,21 @@ import 'package:flutter/foundation.dart';
 import 'package:maroc_teachers/http_exceptions/http_exception.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TeacherProvider with ChangeNotifier {
-  final String token;
-  final String userId;
-  TeacherProvider(this.token, this.userId);
+  String token;
+  String userId;
+
+  Future getCurrentUSer() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    FirebaseUser user = await _auth.currentUser();
+    if (user != null) {
+      userId = user.uid;
+      notifyListeners();
+    }
+  }
+
   List<Teacher> _iteams = [
     /*Teacher(
         teaherName: 'Leonardo Dicaprio',
@@ -105,8 +115,7 @@ class TeacherProvider with ChangeNotifier {
 
   // add teacher to iteams list
   Future<void> addTeacher(Teacher teacher) async {
-    final url =
-        'https://findteachers-e06f1.firebaseio.com/teachers.json?auth=$token';
+    final url = 'https://findteachers-e06f1.firebaseio.com/teachers.json';
     try {
       http.Response response = await http.post(url,
           body: jsonEncode(
@@ -136,8 +145,7 @@ class TeacherProvider with ChangeNotifier {
 
   // delete teacher item from the list
   Future<void> deleteTeacher(String id) async {
-    final url =
-        'https://findteachers-e06f1.firebaseio.com/teachers/$id.json?auth=$token';
+    final url = 'https://findteachers-e06f1.firebaseio.com/teachers/$id.json';
     int teacherIndex = _iteams.indexWhere((teach) => teach.id == id);
     Teacher existingTeacherItem = _iteams[teacherIndex];
     if (teacherIndex >= 0) {
@@ -155,8 +163,7 @@ class TeacherProvider with ChangeNotifier {
 
   //update teacher iteam
   Future<void> updateTeacher(Teacher updateTeacher, String id) async {
-    final url =
-        'https://findteachers-e06f1.firebaseio.com/teachers/$id.json?auth=$token';
+    final url = 'https://findteachers-e06f1.firebaseio.com/teachers/$id.json';
     try {
       http.Response response = await http.patch(
         url,
@@ -186,12 +193,16 @@ class TeacherProvider with ChangeNotifier {
 
   // get the data (list of teachers) from firebase server
   Future<String> getAndSetdata({bool filterByUser = false}) async {
+    await getCurrentUSer();
+    if (userId == null) {
+      return '';
+    }
     var filterSetting =
-        filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+        filterByUser ? '?&orderBy="creatorId"&equalTo="$userId"' : '';
     final url =
-        'https://findteachers-e06f1.firebaseio.com/teachers.json?auth=$token$filterSetting';
+        'https://findteachers-e06f1.firebaseio.com/teachers.json$filterSetting';
     final urlfav =
-        'https://findteachers-e06f1.firebaseio.com/favorites/$userId.json?auth=$token';
+        'https://findteachers-e06f1.firebaseio.com/favorites/$userId.json';
 
     http.Response response = await http.get(url);
     http.Response favoritesResponse = await http.get(urlfav);
@@ -199,6 +210,8 @@ class TeacherProvider with ChangeNotifier {
     final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
     final extractfavorites =
         jsonDecode(favoritesResponse.body) as Map<String, dynamic>;
+    print('extractedData :$extractedData');
+    print('extractfavorites : $extractfavorites');
     List<Teacher> loadingTeachersList = [];
     if (extractedData == null) {
       return '';
@@ -227,7 +240,7 @@ class TeacherProvider with ChangeNotifier {
   //check if there a favorite data for this user
   Future<String> checkFavorites() async {
     final urlfav =
-        'https://findteachers-e06f1.firebaseio.com/favorites/$userId.json?auth=$token';
+        'https://findteachers-e06f1.firebaseio.com/favorites/$userId.json';
 
     http.Response favoritesResponse = await http.get(urlfav);
     print('check favorites data :${favoritesResponse.body}');

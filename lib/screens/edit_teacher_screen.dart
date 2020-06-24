@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
 import 'package:maroc_teachers/providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
@@ -11,13 +14,13 @@ class EditTeacherScreen extends StatefulWidget {
 }
 
 class _EditTeacherScreenState extends State<EditTeacherScreen> {
-  final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool isinit = true;
+  bool _isinit = true;
   String _selectedSubject;
-  bool isNothingSelect = false;
-  bool isloading = false;
+  bool _isNothingSelect = false;
+  bool _isloading = false;
+  File _pickedImage;
 
   List<String> dropDownIteams = [
     'Physics',
@@ -35,14 +38,8 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
   );
 
   @override
-  void initState() {
-    _imageUrlFocusNode.addListener(updateImageUrl);
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
-    if (isinit) {
+    if (_isinit) {
       final teacherId = ModalRoute.of(context).settings.arguments as String;
       if (teacherId != null) {
         _onEditeTeacher =
@@ -51,43 +48,57 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
         _selectedSubject = _onEditeTeacher.teachingSubject;
       }
     }
-    isinit = false;
+    _isinit = false;
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    _imageUrlFocusNode.dispose();
     _imageUrlController.dispose();
-    _imageUrlFocusNode.removeListener(updateImageUrl);
     super.dispose();
   }
 
-  updateImageUrl() {
-    if (!_imageUrlFocusNode.hasFocus) {
-      setState(() {});
-    } else {
-      return;
-    }
+  // updateImageUrl() {
+  //   if (!_imageUrlFocusNode.hasFocus) {
+  //     setState(() {});
+  //   } else {
+  //     return;
+  //   }
+  // }
+
+  void imagePicker() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+      maxWidth: 150,
+    );
+
+    setState(() {
+      _pickedImage = File(pickedFile.path);
+      print('image path : ${_pickedImage.path.toString()}');
+    });
   }
 
   onSaveForm() async {
     final isValid = _formKey.currentState.validate();
+    FocusScope.of(context).unfocus();
+
     if (_selectedSubject == null) {
       setState(() {
-        isNothingSelect = true;
+        _isNothingSelect = true;
       });
       return;
     }
     setState(() {
-      isNothingSelect = false;
+      _isNothingSelect = false;
     });
 
     if (!isValid) {
       return;
     }
     setState(() {
-      isloading = true;
+      _isloading = true;
     });
     _formKey.currentState.save();
     if (_onEditeTeacher.id == null) {
@@ -95,7 +106,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
         await Provider.of<TeacherProvider>(context, listen: false)
             .addTeacher(_onEditeTeacher);
         setState(() {
-          isloading = false;
+          _isloading = false;
         });
       } catch (error) {
         print('there is a problem with add teacher method');
@@ -120,7 +131,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
             .updateTeacher(_onEditeTeacher, _onEditeTeacher.id);
 
         setState(() {
-          isloading = false;
+          _isloading = false;
         });
       } catch (error) {
         await showDialog(
@@ -147,6 +158,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.0,
         title: Text('Edite Teacher'),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -160,10 +172,10 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
           )
         ],
       ),
-      body: isloading
+      body: _isloading
           ? Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Form(
                   key: _formKey,
                   child: ListView(
@@ -199,7 +211,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                           height: 50,
                           decoration: BoxDecoration(
                               color:
-                                  isNothingSelect ? Colors.red : Colors.white,
+                                  _isNothingSelect ? Colors.red : Colors.white,
                               borderRadius: BorderRadius.circular(15)),
                           child: DropdownButton<String>(
                             value: _selectedSubject,
@@ -227,49 +239,32 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                       ),
                       SizedBox(height: 15),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                              height: 95,
-                              width: 95,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: _imageUrlController.text.isEmpty
-                                  ? Text('profile')
-                                  : CircleAvatar(
-                                      radius: 45,
-                                      backgroundImage: NetworkImage(
-                                          _imageUrlController.text),
-                                    )),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'ImageUrl :',
-                                fillColor: Colors.white,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                              ),
-                              keyboardType: TextInputType.text,
-                              focusNode: _imageUrlFocusNode,
-                              controller: _imageUrlController,
-                              onSaved: (value) {
-                                _onEditeTeacher = Teacher(
-                                  teaherName: _onEditeTeacher.teaherName,
-                                  id: _onEditeTeacher.id,
-                                  teacherDescription:
-                                      _onEditeTeacher.teacherDescription,
-                                  teacherImageUrl: value,
-                                  teachingSubject:
-                                      _onEditeTeacher.teachingSubject,
-                                );
-                              },
-                              validator: (value) =>
-                                  value.isEmpty ? 'please enter a Url .' : null,
+                            height: 120,
+                            width: 120,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.amber,
+                              borderRadius: BorderRadius.circular(100),
                             ),
+                            child: _pickedImage == null
+                                ? Text(
+                                    'add your profile ',
+                                    textAlign: TextAlign.center,
+                                  )
+                                : CircleAvatar(
+                                    radius: 70,
+                                    backgroundImage: FileImage(_pickedImage),
+                                  ),
+                          ),
+                          SizedBox(width: 10),
+                          RaisedButton.icon(
+                            color: Colors.amber,
+                            onPressed: imagePicker,
+                            icon: Icon(Icons.image),
+                            label: Text('add image'),
                           ),
                         ],
                       ),
@@ -302,6 +297,24 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                           }
                           return null;
                         },
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        width: 50,
+                        height: 50,
+                        margin: EdgeInsets.symmetric(horizontal: 50),
+                        child: RaisedButton(
+                          color: Colors.blueAccent,
+                          onPressed: () {},
+                          child: Text(
+                            'valid',
+                            style: TextStyle(
+                              fontSize: 18,
+                              letterSpacing: 2.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       )
                     ],
                   )),

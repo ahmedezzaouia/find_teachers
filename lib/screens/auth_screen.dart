@@ -32,7 +32,7 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
           SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               height: deviceSize.height,
               width: deviceSize.width,
               child: Column(
@@ -114,28 +114,33 @@ class _AuthCardState extends State<AuthCard> {
         await Provider.of<Auth>(context, listen: false)
             .signUp(_authdata['Email'], _authdata['Password']);
       }
-    } on HttpException catch (error) {
+    } catch (error) {
       var errorMessage = 'authenticate failed';
-      if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email address is already in use.';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
+
+      if (error.toString().contains('ERROR_USER_NOT_FOUND')) {
+        errorMessage = 'could not find a user with that email';
+      } else if (error.toString().contains('ERROR_WRONG_PASSWORD')) {
+        errorMessage = 'Invalid password or the [password] is wrong';
+      } else if (error.toString().contains('ERROR_INVALID_EMAIL')) {
         errorMessage = 'This is not a valid email address';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak.';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with that email.';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid password.';
+      } else if (error.toString().contains('ERROR_EMAIL_ALREADY_IN_USE')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('ERROR_TOO_MANY_REQUESTS')) {
+        errorMessage = 'too many attempts to sign in as this user.';
+      } else if (error.toString().contains('ERROR_OPERATION_NOT_ALLOWED')) {
+        errorMessage =
+            'Indicates that Email & Password accounts are not enabled.';
+      } else if (error.toString().contains('ERROR_WEAK_PASSWORD')) {
+        errorMessage = ' the password is not strong enough.';
       }
       _showMessageDialog(errorMessage);
-    } catch (error) {
       print('catch error : ${error.toString()}');
-      var errorMessage = 'could not authenticate you, please try again.';
-      _showMessageDialog(errorMessage);
     }
-    setState(() {
-      isloading = false;
-    });
+    if (this.mounted) {
+      setState(() {
+        isloading = false;
+      });
+    }
   }
 
   @override
@@ -144,7 +149,7 @@ class _AuthCardState extends State<AuthCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.Login ? 270 : 320,
+        height: _authMode == AuthMode.Login ? 350 : 385,
         width: 360,
         child: Form(
           key: _formKey,
@@ -162,6 +167,8 @@ class _AuthCardState extends State<AuthCard> {
                     SizedBox(height: 15),
                     TextFormField(
                       decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 5),
                         labelText: 'E-Mail :',
                         fillColor: Colors.white,
                         filled: true,
@@ -185,6 +192,8 @@ class _AuthCardState extends State<AuthCard> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Passwod :',
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 6, horizontal: 5),
                         fillColor: Colors.white,
                         filled: true,
                         border: OutlineInputBorder(
@@ -209,6 +218,8 @@ class _AuthCardState extends State<AuthCard> {
                         ? Container()
                         : TextFormField(
                             decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 5),
                               labelText: 'Confirme Password :',
                               fillColor: Colors.white,
                               filled: true,
@@ -261,9 +272,70 @@ class _AuthCardState extends State<AuthCard> {
                           ),
                         ),
                       ],
+                    ),
+                    buildLoginButton(
+                      _authMode == AuthMode.Login
+                          ? 'Login With Facebook'
+                          : 'Register with Facebook',
+                      'assets/facebook_logo.png',
+                      Color(0xFF3A559F),
+                      () {
+                        Provider.of<Auth>(context, listen: false)
+                            .signInWithFacebook();
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    buildLoginButton(
+                      _authMode == AuthMode.Login
+                          ? 'Login With Google    '
+                          : 'Register With Google    ',
+                      'assets/google_logo.png',
+                      Colors.white,
+                      () {
+                        Provider.of<Auth>(context, listen: false)
+                            .signWithGoole();
+                      },
                     )
                   ],
                 ),
+        ),
+      ),
+    );
+  }
+
+  Padding buildLoginButton(
+      String title, String imageUrl, Color color, Function signFn) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 45),
+      child: GestureDetector(
+        onTap: signFn,
+        child: Container(
+          height: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: color,
+              border: Border.all(color: Colors.grey, width: 1),
+              borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Image.asset(
+                imageUrl,
+                height: 30,
+                width: 30,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(width: 10),
+              Text(
+                title,
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color:
+                        color == Colors.white ? Colors.black87 : Colors.white),
+              ),
+            ],
+          ),
         ),
       ),
     );

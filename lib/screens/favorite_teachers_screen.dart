@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/screens/subjects_screen.dart';
 import '../providers/teacher.dart';
 import '../providers/teacher_provider.dart';
 import '../screens/teacher_management_screen.dart';
@@ -16,7 +17,7 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
   ontapTapped(index) {
     print(index);
     if (index == 0) {
-      Navigator.of(context).pushReplacementNamed('/');
+      Navigator.pushReplacementNamed(context, SubjectsScreen.routeNamed);
     } else if (index == 1) {
       Navigator.of(context).pushReplacementNamed(
           FavoriteTeachersScreen.routeNamed,

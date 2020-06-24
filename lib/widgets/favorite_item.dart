@@ -41,10 +41,7 @@ class FavoriteItem extends StatelessWidget {
                               size: 30,
                             ),
                       onPressed: () async {
-                        await teacher.toggleFavorite(
-                          Provider.of<Auth>(context, listen: false).userId,
-                          Provider.of<Auth>(context, listen: false).token,
-                        );
+                        await teacher.toggleFavorite();
                       }),
                 )
               ],

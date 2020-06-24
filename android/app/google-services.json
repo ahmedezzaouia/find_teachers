@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "327978824991",
+    "firebase_url": "https://findteachers-e06f1.firebaseio.com",
+    "project_id": "findteachers-e06f1",
+    "storage_bucket": "findteachers-e06f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327978824991:android:799998d2e866550096ac2a",
+        "android_client_info": {
+          "package_name": "com.example.hire_teachers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "327978824991-cfdkndv2n4188s7sdgh7irgdo5rem72b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0fP31bqcSOHoYH6e3M8KiJAE59shZce8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "327978824991-cfdkndv2n4188s7sdgh7irgdo5rem72b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

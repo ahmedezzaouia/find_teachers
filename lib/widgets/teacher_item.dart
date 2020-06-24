@@ -66,10 +66,7 @@ class TeacherItem extends StatelessWidget {
                       color: Colors.red,
                     ),
                     onPressed: () async {
-                      await teachData.toggleFavorite(
-                        Provider.of<Auth>(context, listen: false).userId,
-                        Provider.of<Auth>(context, listen: false).token,
-                      );
+                      await teachData.toggleFavorite();
                     }),
               ),
             )

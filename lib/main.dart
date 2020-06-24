@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import './screens/subjects_screen.dart';
 import './screens/auth_screen.dart';
 import './screens/favorite_teachers_screen.dart';
@@ -9,9 +10,14 @@ import './screens/teacher_detail_screem.dart';
 import 'package:provider/provider.dart';
 import './screens/teachers_overview_screen.dart';
 import 'package:maroc_teachers/providers/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    Phoenix(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -22,11 +28,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
-        ChangeNotifierProxyProvider<Auth, TeacherProvider>(
-          create: (BuildContext context) => TeacherProvider(null, null),
-          update: (BuildContext context, Auth auth, TeacherProvider teach) =>
-              TeacherProvider(auth.token, auth.userId),
-        ),
+        ChangeNotifierProvider.value(value: TeacherProvider()),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
@@ -37,13 +39,17 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: Color(0xFF020251),
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            home: auth.isAuth
-                ? SubjectsScreen()
-                : FutureBuilder(
-                    future: auth.tryAutoLogin(),
-                    builder: (ctx, snapShot) => AuthScreen(),
-                  ),
+            home: StreamBuilder(
+              stream: FirebaseAuth.instance.onAuthStateChanged,
+              builder: (ctx, snapshot) {
+                if (snapshot.hasData) {
+                  return SubjectsScreen();
+                }
+                return AuthScreen();
+              },
+            ),
             routes: {
+              SubjectsScreen.routeNamed: (ctx) => SubjectsScreen(),
               TeachersOverviewScreen.routeNamed: (context) =>
                   TeachersOverviewScreen(),
               TeacherDetaillScreen.routeNamed: (context) =>
