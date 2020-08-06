@@ -1,34 +1,49 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
-import 'package:maroc_teachers/http_exceptions/http_exception.dart';
 
-class Auth with ChangeNotifier {
+class AuthProvider with ChangeNotifier {
   FirebaseAuth _auth = FirebaseAuth.instance;
   GoogleSignIn googleSignIn = GoogleSignIn();
   FacebookLogin facebookLogin = FacebookLogin();
 
-  String _userId;
-  String get userId {
-    return _userId;
+  FirebaseUser _user;
+  FirebaseUser get user {
+    if (_user == null) {
+      getCurrentUser();
+      return _user;
+    } else {
+      return _user;
+    }
   }
 
 //register method
-  Future<void> signUp(String email, String password) async {
-    await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
+  Future<void> signUp(String email, String password,
+      Future<void> _onSucces(String _uid)) async {
+    try {
+      AuthResult result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      _user = result.user;
+      await _onSucces(_user.uid);
+    } catch (e) {
+      _user = null;
+
+      print('register error :${e.toString()}');
+    }
+    notifyListeners();
   }
 
 // login method
   Future<void> login(String email, String password) async {
-    print('email : $email');
-    print('password : $password');
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    AuthResult result = await _auth.signInWithEmailAndPassword(
+        email: email, password: password);
+    _user = result.user;
+    print('user profile uid : ${_user.uid}');
+
+    notifyListeners();
   }
 
   //log out method
@@ -40,32 +55,51 @@ class Auth with ChangeNotifier {
   }
 
   //Sign With Google
-  Future signWithGoole() async {
-    GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-    GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
+  Future signWithGoole(
+      Future<void> _onSucess(
+    String _userUid,
+    String name,
+    String email,
+    String image,
+  )) async {
+    try {
+      GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+      GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
-    if (googleSignInAuthentication.accessToken != null) {
-      AuthResult result = await _auth.signInWithCredential(credential);
-      FirebaseUser user = result.user;
-      assert(!user.isAnonymous);
-      assert(user.email != null);
-      assert(user.displayName != null);
-      assert(await user.getIdToken() != null);
-      final FirebaseUser currentUser = await _auth.currentUser();
-      assert(user.uid == currentUser.uid);
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      if (googleSignInAuthentication.accessToken != null) {
+        AuthResult result = await _auth.signInWithCredential(credential);
+        FirebaseUser user = result.user;
+        assert(!user.isAnonymous);
+        assert(user.email != null);
+        assert(user.displayName != null);
+        assert(await user.getIdToken() != null);
+        final FirebaseUser currentUser = await _auth.currentUser();
+        assert(user.uid == currentUser.uid);
+        _user = currentUser;
+        notifyListeners();
+        await _onSucess(
+            _user.uid, _user.displayName, _user.email, _user.photoUrl);
+      }
+    } catch (e) {
+      _user = null;
+      print('google authenticate error :${e.toString()}');
       notifyListeners();
-
-      print('username :${user.displayName}  userUid : ${user.uid}');
     }
   }
 
 //sign with Facebook
-  Future signInWithFacebook() async {
+  Future signInWithFacebook(
+      Future<void> _onSucess(
+    String _userUid,
+    String name,
+    String email,
+    String image,
+  )) async {
     final result = await facebookLogin.logIn(['email']);
 
     switch (result.status) {
@@ -89,12 +123,23 @@ class Auth with ChangeNotifier {
           assert(user.email != null);
           assert(user.displayName != null);
           assert(await user.getIdToken() != null);
+          _user = user;
+          await _onSucess(
+              _user.uid, _user.displayName, _user.email, _user.photoUrl);
+          notifyListeners();
         } catch (error) {
-          print('login error :${error.toString()}');
+          _user = null;
+          print('facebook authenticate error :${error.toString()}');
+          notifyListeners();
         }
         break;
     }
 
     return null;
+  }
+
+  Future<void> getCurrentUser() async {
+    _user = await _auth.currentUser();
+    notifyListeners();
   }
 }

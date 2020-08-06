@@ -39,6 +39,10 @@ dependencies:
   flutter_phoenix: ^0.1.0
   flutter_facebook_login: ^3.0.0
   image_picker: ^0.6.7+2
+  cloud_firestore: ^0.13.7
+  flutter_spinkit: "^4.1.2"
+  firebase_storage: ^3.1.6
+  url_launcher: ^5.5.0
 
 
 

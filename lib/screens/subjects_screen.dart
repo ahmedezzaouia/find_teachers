@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:maroc_teachers/providers/auth.dart';
 import 'package:maroc_teachers/screens/auth_screen.dart';
+import 'package:maroc_teachers/screens/edit_profile_screen.dart';
+import 'package:maroc_teachers/screens/edit_teacher_screen.dart';
 import '../providers/teacher_provider.dart';
 import 'package:provider/provider.dart';
 import './favorite_teachers_screen.dart';
@@ -63,21 +65,37 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                 child: Container(
                   child: Row(
                     children: <Widget>[
+                      Icon(Icons.settings),
+                      SizedBox(width: 5),
+                      Text('Setting'),
+                    ],
+                  ),
+                ),
+                value: 'setting',
+              ),
+              DropdownMenuItem(
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
                       Icon(Icons.exit_to_app),
+                      SizedBox(width: 5),
                       Text('LogOut'),
                     ],
                   ),
                 ),
                 value: 'LogOut',
-              )
+              ),
             ],
             onChanged: (itemIdentifier) async {
               if (itemIdentifier == 'LogOut') {
-                await Provider.of<Auth>(context, listen: false).logOut();
+                await Provider.of<AuthProvider>(context, listen: false)
+                    .logOut();
                 //wait for state to complete before navigating to another screen
                 SchedulerBinding.instance.addPostFrameCallback((_) {
                   Phoenix.rebirth(context);
                 });
+              } else {
+                Navigator.of(context).pushNamed(EditProfileScreen.routeNamed);
               }
             },
           )

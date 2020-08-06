@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:maroc_teachers/screens/edit_profile_screen.dart';
 import './screens/subjects_screen.dart';
 import './screens/auth_screen.dart';
 import './screens/favorite_teachers_screen.dart';
@@ -27,10 +28,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: Auth()),
+        ChangeNotifierProvider.value(value: AuthProvider()),
         ChangeNotifierProvider.value(value: TeacherProvider()),
       ],
-      child: Consumer<Auth>(
+      child: Consumer<AuthProvider>(
         builder: (ctx, auth, _) => MaterialApp(
             title: 'maroc teachers',
             debugShowCheckedModeBanner: false,
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
               },
             ),
             routes: {
+              EditProfileScreen.routeNamed: (ctx) => EditProfileScreen(),
               SubjectsScreen.routeNamed: (ctx) => SubjectsScreen(),
               TeachersOverviewScreen.routeNamed: (context) =>
                   TeachersOverviewScreen(),

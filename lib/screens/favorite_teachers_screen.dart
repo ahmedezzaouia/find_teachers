@@ -42,7 +42,9 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
           itemBuilder: (ctx, index) {
             Teacher teacher = teach.getFavoriteList[index];
             return ChangeNotifierProvider.value(
-                value: teacher, child: FavoriteItem());
+              value: teacher,
+              child: FavoriteItem(),
+            );
           }),
     );
   }

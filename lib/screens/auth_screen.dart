@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maroc_teachers/http_exceptions/http_exception.dart';
+import 'package:maroc_teachers/services/db_service.dart';
 import 'package:provider/provider.dart';
 import 'package:maroc_teachers/providers/auth.dart';
 
@@ -12,15 +13,18 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  double _deviceHeight;
+  double _deviceWidth;
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
+    _deviceHeight = MediaQuery.of(context).size.height;
+    _deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
-            height: deviceSize.height,
-            width: deviceSize.width,
+            height: _deviceHeight,
+            width: _deviceWidth,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF030356), Color(0xFF6221ED)],
@@ -33,8 +37,8 @@ class _AuthScreenState extends State<AuthScreen> {
           SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              height: deviceSize.height,
-              width: deviceSize.width,
+              height: _deviceHeight,
+              width: _deviceWidth,
               child: Column(
                 children: <Widget>[
                   Image.asset(
@@ -68,8 +72,10 @@ class _AuthCardState extends State<AuthCard> {
   Map<String, String> _authdata = {
     'Email': '',
     'Password': '',
+    'name': '',
   };
   bool isloading = false;
+
   void _switchMode() {
     setState(() {
       if (_authMode == AuthMode.Login) {
@@ -108,11 +114,17 @@ class _AuthCardState extends State<AuthCard> {
     _formKey.currentState.save();
     try {
       if (_authMode == AuthMode.Login) {
-        await Provider.of<Auth>(context, listen: false)
+        await Provider.of<AuthProvider>(context, listen: false)
             .login(_authdata['Email'], _authdata['Password']);
       } else {
-        await Provider.of<Auth>(context, listen: false)
-            .signUp(_authdata['Email'], _authdata['Password']);
+        await Provider.of<AuthProvider>(context, listen: false).signUp(
+            _authdata['Email'], _authdata['Password'], (String _userUid) {
+          return DbService.instance.createUserInDb(
+              _userUid,
+              _authdata['name'],
+              'https://firebasestorage.googleapis.com/v0/b/findteachers-e06f1.appspot.com/o/image_placeholder%20%2Fprofile_placeholder.png?alt=media&token=c287e1f1-7d06-4f99-b2fe-62e109fa1253',
+              _authdata['Email']);
+        });
       }
     } catch (error) {
       var errorMessage = 'authenticate failed';
@@ -164,6 +176,31 @@ class _AuthCardState extends State<AuthCard> {
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
+                    SizedBox(height: 15),
+                    _authMode == AuthMode.Login
+                        ? Container()
+                        : TextFormField(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 5),
+                              labelText: 'Name  :',
+                              fillColor: Colors.white,
+                              filled: true,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            validator: (value) {
+                              if (value.isEmpty && value.length == 0) {
+                                return 'enter a name';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _authdata['name'] = value;
+                            },
+                          ),
                     SizedBox(height: 15),
                     TextFormField(
                       decoration: InputDecoration(
@@ -244,8 +281,8 @@ class _AuthCardState extends State<AuthCard> {
                         FlatButton(
                           child: Text(
                             _authMode == AuthMode.Login
-                                ? 'Register'
-                                : 'Sign In',
+                                ? 'switch to Register'
+                                : 'switch to Sign In',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 16,
@@ -280,8 +317,12 @@ class _AuthCardState extends State<AuthCard> {
                       'assets/facebook_logo.png',
                       Color(0xFF3A559F),
                       () {
-                        Provider.of<Auth>(context, listen: false)
-                            .signInWithFacebook();
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .signInWithFacebook((String _userUid, String name,
+                                String email, String image) {
+                          return DbService.instance
+                              .createUserInDb(_userUid, name, image, email);
+                        });
                       },
                     ),
                     SizedBox(height: 10),
@@ -292,8 +333,12 @@ class _AuthCardState extends State<AuthCard> {
                       'assets/google_logo.png',
                       Colors.white,
                       () {
-                        Provider.of<Auth>(context, listen: false)
-                            .signWithGoole();
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .signWithGoole((String _userUid, String name,
+                                String email, String image) {
+                          return DbService.instance
+                              .createUserInDb(_userUid, name, image, email);
+                        });
                       },
                     )
                   ],

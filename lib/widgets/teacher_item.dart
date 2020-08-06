@@ -11,7 +11,7 @@ class TeacherItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(TeacherDetaillScreen.routeNamed,
-            arguments: teachData.id);
+            arguments: teachData.creatorID);
       },
       child: Card(
         margin: EdgeInsets.all(10),

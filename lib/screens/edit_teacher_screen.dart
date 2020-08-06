@@ -58,14 +58,6 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
     super.dispose();
   }
 
-  // updateImageUrl() {
-  //   if (!_imageUrlFocusNode.hasFocus) {
-  //     setState(() {});
-  //   } else {
-  //     return;
-  //   }
-  // }
-
   void imagePicker() async {
     final picker = ImagePicker();
     final pickedFile = await picker.getImage(
@@ -218,9 +210,10 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
                             elevation: 7,
                             hint: Text('Select a Subject'),
                             style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54),
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
                             items: dropDownIteams
                                 .map(
                                   (sub) => DropdownMenuItem(
