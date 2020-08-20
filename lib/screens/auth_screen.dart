@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/http_exceptions/http_exception.dart';
 import 'package:maroc_teachers/services/db_service.dart';
 import 'package:provider/provider.dart';
-import 'package:maroc_teachers/providers/auth.dart';
+import 'package:maroc_teachers/providers/authProvider.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -118,13 +117,17 @@ class _AuthCardState extends State<AuthCard> {
             .login(_authdata['Email'], _authdata['Password']);
       } else {
         await Provider.of<AuthProvider>(context, listen: false).signUp(
-            _authdata['Email'], _authdata['Password'], (String _userUid) {
-          return DbService.instance.createUserInDb(
+          _authdata['Email'],
+          _authdata['Password'],
+          (String _userUid) {
+            return DbService.instance.createUserInDb(
               _userUid,
               _authdata['name'],
-              'https://firebasestorage.googleapis.com/v0/b/findteachers-e06f1.appspot.com/o/image_placeholder%20%2Fprofile_placeholder.png?alt=media&token=c287e1f1-7d06-4f99-b2fe-62e109fa1253',
-              _authdata['Email']);
-        });
+              'https://firebasestorage.googleapis.com/v0/b/findteachers-e06f1.appspot.com/o/profile_placeholder.png?alt=media&token=3741a589-7298-4b5f-bbf0-498bcc2099ec',
+              _authdata['Email'],
+            );
+          },
+        );
       }
     } catch (error) {
       var errorMessage = 'authenticate failed';

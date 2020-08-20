@@ -28,11 +28,11 @@ class Teacher with ChangeNotifier {
     this.isfavorite = false,
   });
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String _id) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     String userId = user.uid;
     final url =
-        'https://findteachers-e06f1.firebaseio.com/favorites/$userId/$id.json';
+        'https://findteachers-e06f1.firebaseio.com/favorites/$userId/$_id.json';
     bool oldStatus = isfavorite;
     isfavorite = !isfavorite;
     notifyListeners();

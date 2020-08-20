@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:maroc_teachers/screens/conversation_page.dart';
 import 'package:maroc_teachers/screens/edit_profile_screen.dart';
+import 'package:maroc_teachers/screens/recent_conversations_screen.dart';
 import './screens/subjects_screen.dart';
 import './screens/auth_screen.dart';
 import './screens/favorite_teachers_screen.dart';
@@ -10,7 +12,7 @@ import './screens/edit_teacher_screen.dart';
 import './screens/teacher_detail_screem.dart';
 import 'package:provider/provider.dart';
 import './screens/teachers_overview_screen.dart';
-import 'package:maroc_teachers/providers/auth.dart';
+import 'package:maroc_teachers/providers/authProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
@@ -50,6 +52,9 @@ class MyApp extends StatelessWidget {
               },
             ),
             routes: {
+              ConversationPage.routeName: (ctx) => ConversationPage(),
+              RecentConversationsScreen.routeName: (ctc) =>
+                  RecentConversationsScreen(),
               EditProfileScreen.routeNamed: (ctx) => EditProfileScreen(),
               SubjectsScreen.routeNamed: (ctx) => SubjectsScreen(),
               TeachersOverviewScreen.routeNamed: (context) =>

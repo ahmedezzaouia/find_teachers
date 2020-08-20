@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/screens/auth_screen.dart';
 import 'package:maroc_teachers/screens/favorite_teachers_screen.dart';
+import 'package:maroc_teachers/screens/recent_conversations_screen.dart';
 import 'package:maroc_teachers/screens/subjects_screen.dart';
 import '../screens/teacher_management_screen.dart';
-import 'package:maroc_teachers/providers/auth.dart';
-import 'package:provider/provider.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -37,7 +35,10 @@ class AppDrawer extends StatelessWidget {
                   .pushReplacementNamed(FavoriteTeachersScreen.routeNamed);
             }),
             Divider(color: Colors.white, height: 1),
-            buildListTile(Icons.chat_bubble, 'Chat', () {}),
+            buildListTile(Icons.chat_bubble, 'Chat', () {
+              Navigator.of(context)
+                  .pushNamed(RecentConversationsScreen.routeName);
+            }),
             Divider(color: Colors.white, height: 1),
             buildListTile(Icons.home, 'Home', () {
               Navigator.of(context).pushNamedAndRemoveUntil(

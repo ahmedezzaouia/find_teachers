@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/providers/auth.dart';
 import '../screens/teacher_detail_screem.dart';
 import '../providers/teacher.dart';
 import 'package:provider/provider.dart';
@@ -10,16 +9,24 @@ class TeacherItem extends StatelessWidget {
     final teachData = Provider.of<Teacher>(context, listen: false);
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(TeacherDetaillScreen.routeNamed,
-            arguments: teachData.creatorID);
+        Navigator.of(context).pushNamed(
+          TeacherDetaillScreen.routeNamed,
+          arguments: {
+            'creatorId': teachData.creatorID,
+            'docId': teachData.id,
+            'isFavorite': teachData.isfavorite,
+          },
+        );
       },
       child: Card(
         margin: EdgeInsets.all(10),
         elevation: 4.0,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15))),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            bottomRight: Radius.circular(15),
+          ),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -59,15 +66,16 @@ class TeacherItem extends StatelessWidget {
             Expanded(
               child: Consumer<Teacher>(
                 builder: (ctx, tech, child) => IconButton(
-                    icon: Icon(
-                      teachData.isfavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: Colors.red,
-                    ),
-                    onPressed: () async {
-                      await teachData.toggleFavorite();
-                    }),
+                  icon: Icon(
+                    teachData.isfavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: Colors.red,
+                  ),
+                  onPressed: () async {
+                    await teachData.toggleFavorite(teachData.id);
+                  },
+                ),
               ),
             )
           ],

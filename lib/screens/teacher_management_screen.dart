@@ -69,30 +69,60 @@ class TeacherManagementScreen extends StatelessWidget {
                     }),
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: FlatButton.icon(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(EditTeacherScreen.routeNamed);
-                },
-                color: Colors.blueGrey,
-                icon: Icon(
-                  Icons.dvr,
-                  size: 30,
-                  color: Colors.white,
-                ),
-                label: Text(
-                  'become a teacher',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 2.0,
+            Consumer<TeacherProvider>(
+              builder: (ctx, teach, child) {
+                return Expanded(
+                  flex: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(1),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF3366FF),
+                          const Color(0xFF6244FF),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        stops: [0.0, 1.0],
+                      ),
+                    ),
+                    child: FlatButton.icon(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(EditTeacherScreen.routeNamed);
+                      },
+                      icon: Icon(
+                        Icons.dvr,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        teach.iteams.length <= 0
+                            ? 'become a teacher'
+                            : 'add more',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             )
           ],
         ),

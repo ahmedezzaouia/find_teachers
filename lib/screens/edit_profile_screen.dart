@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:maroc_teachers/modals/education.dart';
-import 'package:maroc_teachers/providers/auth.dart';
+import 'package:maroc_teachers/providers/authProvider.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
 import 'package:maroc_teachers/services/db_service.dart';
 import 'package:maroc_teachers/services/media_service.dart';
@@ -110,45 +110,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     buildFormProfile(data['teacher']),
                     SizedBox(height: 10),
                     buildRowProfil(),
-                    ListView.builder(
-                      itemCount: _educations.length,
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) =>
-                          EducationItem(
-                        education: _educations[index],
-                        deleteEd: deleteEducation,
-                      ),
-                    ),
+                    _listViewEducationWidget(),
                     Divider(
                       thickness: 0.5,
                       color: Colors.white,
                     ),
                     isload
                         ? CircularProgressIndicator()
-                        : RaisedButton(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            onPressed: () => valider(context),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            color: Colors.blueAccent,
-                            child: Text(
-                              'valider',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                letterSpacing: 2,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          )
+                        : _validerButton(context)
                   ],
                 ),
               );
             }
           }),
+    );
+  }
+
+  RaisedButton _validerButton(BuildContext context) {
+    return RaisedButton(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      onPressed: () => valider(context),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      color: Colors.blueAccent,
+      child: Text(
+        'valider',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+          letterSpacing: 2,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  ListView _listViewEducationWidget() {
+    return ListView.builder(
+      itemCount: _educations.length,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemBuilder: (BuildContext context, int index) => EducationItem(
+        education: _educations[index],
+        deleteEd: deleteEducation,
+      ),
     );
   }
 

@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:maroc_teachers/services/db_service.dart';
 
 class AuthProvider with ChangeNotifier {
+  static AuthProvider instence = AuthProvider();
   FirebaseAuth _auth = FirebaseAuth.instance;
   GoogleSignIn googleSignIn = GoogleSignIn();
   FacebookLogin facebookLogin = FacebookLogin();
@@ -20,6 +22,11 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  void setUser(FirebaseUser _currentUser) {
+    _user = _currentUser;
+    notifyListeners();
+  }
+
 //register method
   Future<void> signUp(String email, String password,
       Future<void> _onSucces(String _uid)) async {
@@ -28,6 +35,7 @@ class AuthProvider with ChangeNotifier {
           email: email, password: password);
       _user = result.user;
       await _onSucces(_user.uid);
+      await DbService.instance.updateUserLastSeen(_user.uid);
     } catch (e) {
       _user = null;
 
@@ -41,7 +49,7 @@ class AuthProvider with ChangeNotifier {
     AuthResult result = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
     _user = result.user;
-    print('user profile uid : ${_user.uid}');
+    await DbService.instance.updateUserLastSeen(_user.uid);
 
     notifyListeners();
   }
@@ -51,6 +59,7 @@ class AuthProvider with ChangeNotifier {
     await _auth.signOut();
     await googleSignIn.signOut();
     await facebookLogin.logOut();
+    _user = null;
     notifyListeners();
   }
 
@@ -68,9 +77,8 @@ class AuthProvider with ChangeNotifier {
           await googleSignInAccount.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken);
       if (googleSignInAuthentication.accessToken != null) {
         AuthResult result = await _auth.signInWithCredential(credential);
         FirebaseUser user = result.user;
@@ -84,6 +92,7 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         await _onSucess(
             _user.uid, _user.displayName, _user.email, _user.photoUrl);
+        await DbService.instance.updateUserLastSeen(_user.uid);
       }
     } catch (e) {
       _user = null;
@@ -113,6 +122,7 @@ class AuthProvider with ChangeNotifier {
 
       case FacebookLoginStatus.loggedIn:
         print("LoggedIn to facebook account");
+
         try {
           AuthCredential credential = FacebookAuthProvider.getCredential(
             accessToken: result.accessToken.token,
@@ -123,9 +133,11 @@ class AuthProvider with ChangeNotifier {
           assert(user.email != null);
           assert(user.displayName != null);
           assert(await user.getIdToken() != null);
-          _user = user;
+          _user = authResult.user;
           await _onSucess(
               _user.uid, _user.displayName, _user.email, _user.photoUrl);
+          await DbService.instance.updateUserLastSeen(_user.uid);
+
           notifyListeners();
         } catch (error) {
           _user = null;
@@ -140,6 +152,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> getCurrentUser() async {
     _user = await _auth.currentUser();
+    print('getCurrentUser :${_user.uid}');
     notifyListeners();
   }
 }

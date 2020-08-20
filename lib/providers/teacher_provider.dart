@@ -5,6 +5,8 @@ import 'package:maroc_teachers/http_exceptions/http_exception.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:maroc_teachers/services/db_service.dart';
+import 'package:maroc_teachers/services/snackbar_service.dart';
 
 class TeacherProvider with ChangeNotifier {
   String token;
@@ -45,13 +47,15 @@ class TeacherProvider with ChangeNotifier {
   // add teacher to iteams list
   Future<void> addTeacher(Teacher teacher) async {
     final url = 'https://findteachers-e06f1.firebaseio.com/teachers.json';
+
     try {
+      String _userImage = await DbService.instance.getUserImage(userId);
       http.Response response = await http.post(url,
           body: jsonEncode(
             {
               'teaherName': teacher.teaherName,
               'teacherDescription': teacher.teacherDescription,
-              'teacherImageUrl': teacher.teacherImageUrl,
+              'teacherImageUrl': _userImage,
               'teachingSubject': teacher.teachingSubject,
               'creatorId': userId,
             },
@@ -62,12 +66,16 @@ class TeacherProvider with ChangeNotifier {
         teaherName: teacher.teaherName,
         id: jsonDecode(response.body)['name'],
         teacherDescription: teacher.teacherDescription,
-        teacherImageUrl: teacher.teacherImageUrl,
+        teacherImageUrl: _userImage,
         teachingSubject: teacher.teachingSubject,
       );
       _iteams.add(teach);
+
       notifyListeners();
     } catch (error) {
+      SnackBarServie.instance
+          .showSnackBarError('error occurred during the operation!.');
+
       throw error;
     }
   }
@@ -94,13 +102,14 @@ class TeacherProvider with ChangeNotifier {
   Future<void> updateTeacher(Teacher updateTeacher, String id) async {
     final url = 'https://findteachers-e06f1.firebaseio.com/teachers/$id.json';
     try {
+      String _userImage = await DbService.instance.getUserImage(userId);
+
       http.Response response = await http.patch(
         url,
         body: jsonEncode(
           {
             'teaherName': updateTeacher.teaherName,
             'teacherDescription': updateTeacher.teacherDescription,
-            'teacherImageUrl': updateTeacher.teacherImageUrl,
             'teachingSubject': updateTeacher.teachingSubject,
           },
         ),
@@ -111,11 +120,20 @@ class TeacherProvider with ChangeNotifier {
       } else {
         int teacherIndex = _iteams.indexWhere((teach) => teach.id == id);
         if (teacherIndex >= 0) {
-          _iteams[teacherIndex] = updateTeacher;
+          Teacher techUpdating = Teacher(
+            teaherName: updateTeacher.teaherName,
+            id: id,
+            teacherDescription: updateTeacher.teacherDescription,
+            teacherImageUrl: _userImage,
+            teachingSubject: updateTeacher.teachingSubject,
+          );
+          _iteams[teacherIndex] = techUpdating;
           notifyListeners();
         }
       }
     } catch (error) {
+      SnackBarServie.instance
+          .showSnackBarError('error occurred during the operation!.');
       throw error;
     }
   }

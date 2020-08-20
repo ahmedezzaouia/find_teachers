@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maroc_teachers/screens/recent_conversations_screen.dart';
 import 'package:maroc_teachers/screens/subjects_screen.dart';
 import '../providers/teacher.dart';
 import '../providers/teacher_provider.dart';
@@ -22,9 +23,10 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
       Navigator.of(context).pushReplacementNamed(
           FavoriteTeachersScreen.routeNamed,
           arguments: ontapTapped);
+    } else if (index == 2) {
+      Navigator.of(context).pushNamed(TeacherManagementScreen.routeNamed);
     } else {
-      Navigator.of(context)
-          .pushReplacementNamed(TeacherManagementScreen.routeNamed);
+      Navigator.pushNamed(context, RecentConversationsScreen.routeName);
     }
   }
 
@@ -100,6 +102,7 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
           BottomNavigationBarItem(
@@ -107,6 +110,10 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
           BottomNavigationBarItem(
               icon: Icon(Icons.supervised_user_circle),
               title: Text('Management')),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            title: Text('Chat'),
+          ),
         ],
       ),
     );

@@ -67,9 +67,9 @@ class _TeachersOverviewScreenState extends State<TeachersOverviewScreen> {
                           itemCount: teach.findByCategory(categoryName).length,
                           itemBuilder: (BuildContext context, int index) =>
                               ChangeNotifierProvider.value(
-                                  value:
-                                      teach.findByCategory(categoryName)[index],
-                                  child: TeacherItem()),
+                            value: teach.findByCategory(categoryName)[index],
+                            child: TeacherItem(),
+                          ),
                         ),
                 ),
               ),

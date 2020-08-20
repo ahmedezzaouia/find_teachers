@@ -9,7 +9,7 @@ class TeacherManagementItem extends StatelessWidget {
   TeacherManagementItem({this.teach});
   @override
   Widget build(BuildContext context) {
-    final teachData = Provider.of<TeacherProvider>(context, listen: false);
+    final teachProvider = Provider.of<TeacherProvider>(context, listen: false);
     return Card(
       margin: EdgeInsets.all(5),
       elevation: 4.0,
@@ -62,35 +62,39 @@ class TeacherManagementItem extends StatelessWidget {
                   IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: Text('are you sur ?'),
-                            content:
-                                Text('do you want to remove this from cart!'),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('No'),
-                                onPressed: () {
-                                  Navigator.of(ctx).pop();
-                                },
-                              ),
-                              FlatButton(
-                                child: Text('Yes'),
-                                onPressed: () {
-                                  teachData.deleteTeacher(teach.id);
-                                  Navigator.of(ctx).pop();
-                                },
-                              ),
-                            ],
-                          ),
-                        );
+                        _showDialogMessage(context, teachProvider);
                       })
                 ],
               ),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Future _showDialogMessage(
+      BuildContext context, TeacherProvider teachProvider) {
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('are you sur ?'),
+        content: Text('do you want to remove this from cart!'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('No'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('Yes'),
+            onPressed: () {
+              teachProvider.deleteTeacher(teach.id);
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
       ),
     );
   }

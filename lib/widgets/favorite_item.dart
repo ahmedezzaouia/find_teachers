@@ -9,8 +9,14 @@ class FavoriteItem extends StatelessWidget {
     final teacher = Provider.of<Teacher>(context, listen: false);
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(TeacherDetaillScreen.routeNamed,
-            arguments: teacher.creatorID);
+        Navigator.of(context).pushNamed(
+          TeacherDetaillScreen.routeNamed,
+          arguments: {
+            'creatorId': teacher.creatorID,
+            'docId': teacher.id,
+            'isFavorite': teacher.isfavorite,
+          },
+        );
       },
       child: Card(
         margin: EdgeInsets.all(5),
@@ -40,7 +46,7 @@ class FavoriteItem extends StatelessWidget {
                               size: 30,
                             ),
                       onPressed: () async {
-                        await teacher.toggleFavorite();
+                        await teacher.toggleFavorite(teacher.id);
                       }),
                 )
               ],

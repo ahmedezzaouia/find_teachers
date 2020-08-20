@@ -5,8 +5,8 @@ class MediaService {
 
   Future<PickedFile> getImageFromLibrary() async {
     return ImagePicker().getImage(
-      source: ImageSource.camera,
-      imageQuality: 50,
+      source: ImageSource.gallery,
+      imageQuality: 70,
       maxWidth: 150,
     );
   }

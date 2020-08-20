@@ -1,9 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:maroc_teachers/modals/category.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
 import 'package:maroc_teachers/providers/teacher_provider.dart';
+import 'package:maroc_teachers/services/snackbar_service.dart';
+import 'package:maroc_teachers/shared/constants.dart';
+import 'package:maroc_teachers/widgets/subjects_item.dart';
 import 'package:provider/provider.dart';
 
 class EditTeacherScreen extends StatefulWidget {
@@ -14,21 +15,10 @@ class EditTeacherScreen extends StatefulWidget {
 }
 
 class _EditTeacherScreenState extends State<EditTeacherScreen> {
-  final _imageUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isinit = true;
-  String _selectedSubject;
-  bool _isNothingSelect = false;
-  bool _isloading = false;
-  File _pickedImage;
-
-  List<String> dropDownIteams = [
-    'Physics',
-    'Mathematics',
-    'Informatique',
-    'Languages'
-  ];
-
+  double _deviceHeight;
+  double _deviceWidth;
+  String _selectedSubject = '';
   Teacher _onEditeTeacher = Teacher(
     teaherName: '',
     id: null,
@@ -36,15 +26,16 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
     teacherImageUrl: '',
     teachingSubject: '',
   );
-
+  bool _isLoading = false;
+  String nonSelectedError = '';
+  bool _isinit = true;
   @override
   void didChangeDependencies() {
     if (_isinit) {
-      final teacherId = ModalRoute.of(context).settings.arguments as String;
-      if (teacherId != null) {
+      final id = ModalRoute.of(context).settings.arguments as String;
+      if (id != null) {
         _onEditeTeacher =
-            Provider.of<TeacherProvider>(context).findByTeacherId(teacherId);
-        _imageUrlController.text = _onEditeTeacher.teacherImageUrl;
+            Provider.of<TeacherProvider>(context).findByTeacherId(id);
         _selectedSubject = _onEditeTeacher.teachingSubject;
       }
     }
@@ -53,265 +44,257 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
   }
 
   @override
-  void dispose() {
-    _imageUrlController.dispose();
-    super.dispose();
-  }
-
-  void imagePicker() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.getImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
-      maxWidth: 150,
-    );
-
-    setState(() {
-      _pickedImage = File(pickedFile.path);
-      print('image path : ${_pickedImage.path.toString()}');
-    });
-  }
-
-  onSaveForm() async {
-    final isValid = _formKey.currentState.validate();
-    FocusScope.of(context).unfocus();
-
-    if (_selectedSubject == null) {
-      setState(() {
-        _isNothingSelect = true;
-      });
-      return;
-    }
-    setState(() {
-      _isNothingSelect = false;
-    });
-
-    if (!isValid) {
-      return;
-    }
-    setState(() {
-      _isloading = true;
-    });
-    _formKey.currentState.save();
-    if (_onEditeTeacher.id == null) {
-      try {
-        await Provider.of<TeacherProvider>(context, listen: false)
-            .addTeacher(_onEditeTeacher);
-        setState(() {
-          _isloading = false;
-        });
-      } catch (error) {
-        print('there is a problem with add teacher method');
-        await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text('Something went wrong.'),
-            actions: <Widget>[
-              FlatButton(
-                  child: Text('okey'),
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  }),
-            ],
-          ),
-        );
-      }
-    } else {
-      try {
-        await Provider.of<TeacherProvider>(context, listen: false)
-            .updateTeacher(_onEditeTeacher, _onEditeTeacher.id);
-
-        setState(() {
-          _isloading = false;
-        });
-      } catch (error) {
-        await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text('Something went wrong.'),
-            actions: <Widget>[
-              FlatButton(
-                  child: Text('okey'),
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  }),
-            ],
-          ),
-        );
-      }
-    }
-
-    Navigator.of(context).pop();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    _deviceHeight = MediaQuery.of(context).size.height;
+    _deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         title: Text('Edite Teacher'),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.swap_vertical_circle,
-              size: 30,
+      ),
+      body: _editeProfileUI(),
+    );
+  }
+
+  Widget _editeProfileUI() {
+    return Builder(builder: (BuildContext _context) {
+      return SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              _topTextWidget(),
+              _gridViewWidget(),
+              _formWidget(),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : _buttonWidget(_context),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buttonWidget(BuildContext _context) {
+    return Container(
+      height: _deviceHeight * 0.07,
+      width: _deviceHeight * 0.3,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF3466FF),
+              const Color(0xFF70CCAF),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.0, 1.0],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
             ),
-            onPressed: () => onSaveForm(),
+          ]),
+      child: FlatButton(
+        onPressed: () => _valider(_context),
+        child: Text(
+          'valider',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 3,
+            fontStyle: FontStyle.italic,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container _formWidget() {
+    return Container(
+      height: _deviceHeight * 0.3,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            TextFormField(
+              initialValue: _onEditeTeacher.teaherName,
+              style: TextStyle(color: Colors.white),
+              decoration: kTextFieldProfileDecoration.copyWith(
+                labelText: 'Name :',
+                fillColor: Colors.white12,
+              ),
+              keyboardType: TextInputType.text,
+              onSaved: (_input) {
+                _onEditeTeacher = Teacher(
+                  teaherName: _input,
+                  id: _onEditeTeacher.id,
+                  teacherDescription: _onEditeTeacher.teacherDescription,
+                  teacherImageUrl: null,
+                  teachingSubject: '',
+                );
+              },
+              validator: (_input) {
+                if (_input.isEmpty) {
+                  return 'please enter your name.!';
+                }
+                if (_input.length > 25) {
+                  return 'you should enter a short name !.';
+                }
+                if (_input.contains(RegExp(r'[0-9]'))) {
+                  return 'your name should not have a number!.';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              initialValue: _onEditeTeacher.teacherDescription,
+              style: TextStyle(color: Colors.white),
+              decoration: kTextFieldProfileDecoration.copyWith(
+                labelText: 'Your Short Description :',
+                fillColor: Colors.white12,
+              ),
+              keyboardType: TextInputType.multiline,
+              maxLines: 3,
+              onSaved: (_input) {
+                _onEditeTeacher = Teacher(
+                  teaherName: _onEditeTeacher.teaherName,
+                  id: _onEditeTeacher.id,
+                  teacherDescription: _input,
+                  teacherImageUrl: null,
+                  teachingSubject: _selectedSubject,
+                );
+              },
+              validator: (_input) {
+                if (_input.isEmpty) {
+                  return 'please enter your name.!';
+                }
+
+                return null;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Column _topTextWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'You want to become a Teacher ?',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2.0,
+            color: Colors.white,
+          ),
+        ),
+        Text(
+          'please select one subject you want to teach.',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white70,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _gridViewWidget() {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: _deviceHeight * 0.3,
+            child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: categories.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 2,
+                crossAxisSpacing: 0.5,
+                mainAxisSpacing: 0.5,
+              ),
+              itemBuilder: (ctx, index) => GestureDetector(
+                onTap: () => _onSelected(categories[index].subjectName),
+                child: SubjectItem(
+                  category: categories[index],
+                  color: Color(0XFF778cf8),
+                  isSubjectSelected:
+                      _selectedSubject == categories[index].subjectName,
+                ),
+              ),
+            ),
+          ),
+          Text(
+            nonSelectedError,
+            style: TextStyle(
+                color: Colors.red, fontSize: 15, fontStyle: FontStyle.italic),
           )
         ],
       ),
-      body: _isloading
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    children: <Widget>[
-                      TextFormField(
-                        initialValue: _onEditeTeacher.teaherName,
-                        decoration: InputDecoration(
-                          labelText: 'Name :',
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
-                        keyboardType: TextInputType.text,
-                        onSaved: (value) {
-                          _onEditeTeacher = Teacher(
-                            teaherName: value,
-                            id: _onEditeTeacher.id,
-                            teacherDescription:
-                                _onEditeTeacher.teacherDescription,
-                            teacherImageUrl: _onEditeTeacher.teacherImageUrl,
-                            teachingSubject: _onEditeTeacher.teachingSubject,
-                          );
-                        },
-                        validator: (value) =>
-                            value.isEmpty ? 'please enter a name .' : null,
-                      ),
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: 50,
-                          decoration: BoxDecoration(
-                              color:
-                                  _isNothingSelect ? Colors.red : Colors.white,
-                              borderRadius: BorderRadius.circular(15)),
-                          child: DropdownButton<String>(
-                            value: _selectedSubject,
-                            elevation: 7,
-                            hint: Text('Select a Subject'),
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54,
-                            ),
-                            items: dropDownIteams
-                                .map(
-                                  (sub) => DropdownMenuItem(
-                                    child: Text(sub),
-                                    value: sub,
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedSubject = value;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: 120,
-                            width: 120,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.amber,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: _pickedImage == null
-                                ? Text(
-                                    'add your profile ',
-                                    textAlign: TextAlign.center,
-                                  )
-                                : CircleAvatar(
-                                    radius: 70,
-                                    backgroundImage: FileImage(_pickedImage),
-                                  ),
-                          ),
-                          SizedBox(width: 10),
-                          RaisedButton.icon(
-                            color: Colors.amber,
-                            onPressed: imagePicker,
-                            icon: Icon(Icons.image),
-                            label: Text('add image'),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        initialValue: _onEditeTeacher.teacherDescription,
-                        decoration: InputDecoration(
-                          labelText: 'About :',
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
-                        maxLines: 8,
-                        keyboardType: TextInputType.multiline,
-                        onSaved: (value) {
-                          _onEditeTeacher = Teacher(
-                            teaherName: _onEditeTeacher.teaherName,
-                            id: _onEditeTeacher.id,
-                            teacherDescription: value,
-                            teacherImageUrl: _imageUrlController.text,
-                            teachingSubject: _selectedSubject,
-                          );
-                        },
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'please enter a Description';
-                          } else if (value.length >= 500) {
-                            return 'you enter more than 5 lines,should enter less.';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 20),
-                      Container(
-                        width: 50,
-                        height: 50,
-                        margin: EdgeInsets.symmetric(horizontal: 50),
-                        child: RaisedButton(
-                          color: Colors.blueAccent,
-                          onPressed: () {},
-                          child: Text(
-                            'valid',
-                            style: TextStyle(
-                              fontSize: 18,
-                              letterSpacing: 2.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  )),
-            ),
     );
+  }
+
+  _onSelected(String _selSubject) {
+    setState(() {
+      _selectedSubject = _selSubject;
+    });
+    print('selected iteam\'index :$_selectedSubject');
+  }
+
+  _valider(BuildContext _context) async {
+    bool isValidate = _formKey.currentState.validate();
+    if (!isValidate) {
+      return;
+    }
+    if (_selectedSubject.isEmpty) {
+      setState(() {
+        nonSelectedError = 'you should select one subject!';
+      });
+
+      return;
+    }
+    _formKey.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      SnackBarServie.instance.buildcontext = _context;
+      if (_onEditeTeacher.id == null) {
+        await Provider.of<TeacherProvider>(context, listen: false)
+            .addTeacher(_onEditeTeacher);
+      } else {
+        await Provider.of<TeacherProvider>(context, listen: false)
+            .updateTeacher(_onEditeTeacher, _onEditeTeacher.id);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Navigator.pushReplacementNamed(
+      //     context, TeacherManagementScreen.routeNamed);
+      Navigator.pop(_context);
+    } catch (e) {
+      print('error to add a techare to database becouse of : ${e.toString()}');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
