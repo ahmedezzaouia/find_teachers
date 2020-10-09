@@ -15,20 +15,20 @@ class FavoriteTeachersScreen extends StatefulWidget {
 }
 
 class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
-  ontapTapped(index) {
-    print(index);
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, SubjectsScreen.routeNamed);
-    } else if (index == 1) {
-      Navigator.of(context).pushReplacementNamed(
-          FavoriteTeachersScreen.routeNamed,
-          arguments: ontapTapped);
-    } else if (index == 2) {
-      Navigator.of(context).pushNamed(TeacherManagementScreen.routeNamed);
-    } else {
-      Navigator.pushNamed(context, RecentConversationsScreen.routeName);
-    }
-  }
+  // ontapTapped(index) {
+  //   print(index);
+  //   if (index == 0) {
+  //     Navigator.pushReplacementNamed(context, SubjectsScreen.routeNamed);
+  //   } else if (index == 1) {
+  //     Navigator.of(context).pushReplacementNamed(
+  //         FavoriteTeachersScreen.routeNamed,
+  //         arguments: ontapTapped);
+  //   } else if (index == 2) {
+  //     Navigator.of(context).pushNamed(TeacherManagementScreen.routeNamed);
+  //   } else {
+  //     Navigator.pushNamed(context, RecentConversationsScreen.routeName);
+  //   }
+  // }
 
   Consumer<TeacherProvider> buildConsumer() {
     return Consumer<TeacherProvider>(
@@ -96,26 +96,26 @@ class _FavoriteTeachersScreenState extends State<FavoriteTeachersScreen> {
                   return buildConsumer();
                 }),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        onTap: ontapTapped,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite), title: Text('Favorite')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.supervised_user_circle),
-              title: Text('Management')),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            title: Text('Chat'),
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: 1,
+      //   onTap: ontapTapped,
+      //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      //   selectedItemColor: Colors.white,
+      //   unselectedItemColor: Colors.grey,
+      //   type: BottomNavigationBarType.fixed,
+      //   items: [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+      //     BottomNavigationBarItem(
+      //         icon: Icon(Icons.favorite), title: Text('Favorite')),
+      //     BottomNavigationBarItem(
+      //         icon: Icon(Icons.supervised_user_circle),
+      //         title: Text('Management')),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.chat),
+      //       title: Text('Chat'),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

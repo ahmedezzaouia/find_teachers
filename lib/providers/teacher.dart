@@ -14,6 +14,7 @@ class Teacher with ChangeNotifier {
   final String teacherImageUrl;
   final String teachingSubject;
   final String teacherEmaill;
+  final String teacherLocation;
   bool isfavorite;
 
   Teacher({
@@ -22,6 +23,7 @@ class Teacher with ChangeNotifier {
     @required this.teacherDescription,
     @required this.teacherImageUrl,
     @required this.teachingSubject,
+    @required this.teacherLocation,
     this.phoneNumber,
     this.teacherEmaill,
     this.creatorID,
@@ -66,6 +68,7 @@ class Teacher with ChangeNotifier {
       isfavorite: false,
       phoneNumber: data['phone'],
       teacherEmaill: data['email'],
+      teacherLocation: _snapshot['location'],
     );
   }
 }

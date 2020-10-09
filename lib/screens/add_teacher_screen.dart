@@ -7,14 +7,14 @@ import 'package:maroc_teachers/shared/constants.dart';
 import 'package:maroc_teachers/widgets/subjects_item.dart';
 import 'package:provider/provider.dart';
 
-class EditTeacherScreen extends StatefulWidget {
+class AddTeacherScreen extends StatefulWidget {
   static const routeNamed = '/edit-teacher';
 
   @override
-  _EditTeacherScreenState createState() => _EditTeacherScreenState();
+  _AddTeacherScreenState createState() => _AddTeacherScreenState();
 }
 
-class _EditTeacherScreenState extends State<EditTeacherScreen> {
+class _AddTeacherScreenState extends State<AddTeacherScreen> {
   final _formKey = GlobalKey<FormState>();
   double _deviceHeight;
   double _deviceWidth;
@@ -50,7 +50,7 @@ class _EditTeacherScreenState extends State<EditTeacherScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text('Edite Teacher'),
+        title: Text('Add Teacher'),
         centerTitle: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),

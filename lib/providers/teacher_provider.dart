@@ -60,8 +60,8 @@ class TeacherProvider with ChangeNotifier {
               'creatorId': userId,
             },
           ));
-      print(' the result is ${response.body}');
-      print(' the status is ${response.statusCode}');
+      // print(' the result is ${response.body}');
+      // print(' the status is ${response.statusCode}');
       Teacher teach = Teacher(
         teaherName: teacher.teaherName,
         id: jsonDecode(response.body)['name'],
@@ -157,8 +157,8 @@ class TeacherProvider with ChangeNotifier {
     final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
     final extractfavorites =
         jsonDecode(favoritesResponse.body) as Map<String, dynamic>;
-    print('extractedData :$extractedData');
-    print('extractfavorites : $extractfavorites');
+    // print('extractedData :$extractedData');
+    // print('extractfavorites : $extractfavorites');
     List<Teacher> loadingTeachersList = [];
     if (extractedData == null) {
       return '';
@@ -181,7 +181,7 @@ class TeacherProvider with ChangeNotifier {
     );
     _iteams = loadingTeachersList;
     notifyListeners();
-    print(jsonDecode(response.body));
+    // print(jsonDecode(response.body));
     return response.body;
   }
 

@@ -13,23 +13,26 @@ class AuthProvider with ChangeNotifier {
   FacebookLogin facebookLogin = FacebookLogin();
 
   FirebaseUser _user;
-  FirebaseUser get user {
-    if (_user == null) {
-      getCurrentUser();
-      return _user;
-    } else {
-      return _user;
-    }
-  }
+  // FirebaseUser get user {
+  //   if (_user == null) {
+  //     getCurrentUser();
+  //     return _user;
+  //   } else {
+  //     return _user;
+  //   }
+  // }
 
+  FirebaseUser get user => _user;
   void setUser(FirebaseUser _currentUser) {
     _user = _currentUser;
-    notifyListeners();
   }
 
 //register method
-  Future<void> signUp(String email, String password,
-      Future<void> _onSucces(String _uid)) async {
+  Future<void> signUp(
+    String email,
+    String password,
+    Future<void> _onSucces(String _uid),
+  ) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -65,12 +68,13 @@ class AuthProvider with ChangeNotifier {
 
   //Sign With Google
   Future signWithGoole(
-      Future<void> _onSucess(
-    String _userUid,
-    String name,
-    String email,
-    String image,
-  )) async {
+    Future<void> _onSucess(
+      String _userUid,
+      String name,
+      String email,
+      String image,
+    ),
+  ) async {
     try {
       GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
       GoogleSignInAuthentication googleSignInAuthentication =
@@ -150,9 +154,9 @@ class AuthProvider with ChangeNotifier {
     return null;
   }
 
-  Future<void> getCurrentUser() async {
-    _user = await _auth.currentUser();
-    print('getCurrentUser :${_user.uid}');
-    notifyListeners();
-  }
+  // Future getAndSetCurrentUser() async {
+  //   FirebaseUser currentUser = await _auth.currentUser();
+  //   _user = currentUser;
+  //   notifyListeners();
+  // }
 }

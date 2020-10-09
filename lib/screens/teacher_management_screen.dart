@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maroc_teachers/screens/edit_teacher_screen.dart';
+import 'package:maroc_teachers/screens/add_teacher_screen.dart';
 import 'package:maroc_teachers/widgets/appdrawer.dart';
 import '../providers/teacher_provider.dart';
 import '../widgets/teacher_management_item.dart';
@@ -101,7 +101,7 @@ class TeacherManagementScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30)),
                       onPressed: () {
                         Navigator.of(context)
-                            .pushNamed(EditTeacherScreen.routeNamed);
+                            .pushNamed(AddTeacherScreen.routeNamed);
                       },
                       icon: Icon(
                         Icons.dvr,

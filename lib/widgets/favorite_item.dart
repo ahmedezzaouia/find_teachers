@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maroc_teachers/providers/teacher.dart';
-import 'package:maroc_teachers/screens/teacher_detail_screem.dart';
+import 'package:maroc_teachers/screens/teacher_Profile.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteItem extends StatelessWidget {
@@ -10,7 +10,7 @@ class FavoriteItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
-          TeacherDetaillScreen.routeNamed,
+          TeacherProfile.routeNamed,
           arguments: {
             'creatorId': teacher.creatorID,
             'docId': teacher.id,

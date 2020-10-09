@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:maroc_teachers/providers/authProvider.dart';
 import 'package:maroc_teachers/screens/edit_profile_screen.dart';
+import 'package:maroc_teachers/screens/notification_screen.dart';
 import 'package:maroc_teachers/screens/recent_conversations_screen.dart';
 import 'package:maroc_teachers/screens/teachers_overview_screen.dart';
 import 'package:maroc_teachers/services/db_service.dart';
@@ -24,29 +25,19 @@ class SubjectsScreen extends StatefulWidget {
 }
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
-  void ontapTapped(index) {
-    print(index);
-    if (index == 0) {
-      Navigator.of(context).pushReplacementNamed(SubjectsScreen.routeNamed);
-    } else if (index == 1) {
-      Navigator.of(context).pushNamed(FavoriteTeachersScreen.routeNamed);
-    } else if (index == 2) {
-      Navigator.of(context).pushNamed(TeacherManagementScreen.routeNamed);
-    } else {
-      Navigator.pushNamed(context, RecentConversationsScreen.routeName);
-    }
-  }
-
+  AuthProvider _auth;
   @override
   void initState() {
     Future.delayed(Duration.zero).then(
       (_) async {
+        // get and set data to iteams list from TeacherProvider
         Provider.of<TeacherProvider>(context, listen: false).getAndSetdata();
+
         //update the userLastSeen after he enter to the subjects screen
-        FirebaseUser user = await FirebaseAuth.instance.currentUser();
-        DbService.instance.updateUserLastSeen(user.uid);
-        //set the current user to authProvider
-        Provider.of<AuthProvider>(context, listen: false).setUser(user);
+        var _auth = Provider.of<AuthProvider>(context, listen: false);
+        DbService.instance.updateUserLastSeen(_auth.user.uid);
+
+        //subscrib to a topic for specific notification
         final fbm = FirebaseMessaging();
         fbm.requestNotificationPermissions();
         fbm.configure(onMessage: (_msg) {
@@ -59,7 +50,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           print('onResume: $_msg');
           return;
         });
-        fbm.subscribeToTopic(user.uid);
+        fbm.subscribeToTopic(_auth.user.uid);
       },
     );
 
@@ -69,6 +60,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   @override
   Widget build(BuildContext context) {
     print('subjects screen build');
+    _auth = Provider.of<AuthProvider>(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -77,6 +69,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         elevation: 0.0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: <Widget>[
+          _notificationBadge(context),
           DropdownButton(
             underline: Container(),
             icon: Icon(
@@ -115,7 +108,10 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     .logOut();
                 //wait for state to complete before navigating to another screen
                 SchedulerBinding.instance.addPostFrameCallback((_) {
-                  Phoenix.rebirth(context);
+                  //this for restart the entire app
+                  if (mounted) {
+                    Phoenix.rebirth(context);
+                  }
                 });
               } else {
                 Navigator.of(context).pushNamed(EditProfileScreen.routeNamed);
@@ -167,32 +163,57 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: ontapTapped,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            title: Text('Favorite'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.supervised_user_circle),
-            title: Text('Management'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            title: Text('Chat'),
-          ),
-        ],
-      ),
+    );
+  }
+
+  Stack _notificationBadge(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        IconButton(
+          icon: Icon(Icons.notifications),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => NotificationScreen(),
+              ),
+            );
+          },
+        ),
+        Positioned(
+          top: 13,
+          left: 9,
+          child: StreamBuilder<Object>(
+              stream: DbService.instance
+                  .getUserNotificationsCount(userId: _auth.user.uid),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Text('');
+                }
+                int notificationCount = snapshot.data;
+                if (notificationCount == 0) {
+                  return Container();
+                }
+                return Container(
+                    alignment: Alignment.center,
+                    height: 18,
+                    width: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Text(
+                      '+$notificationCount',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ));
+              }),
+        ),
+      ],
     );
   }
 }

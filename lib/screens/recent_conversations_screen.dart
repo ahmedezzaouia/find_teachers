@@ -133,7 +133,7 @@ class _RecentConversationsScreenState extends State<RecentConversationsScreen> {
   Widget _conversationListViewWidget() {
     return StreamBuilder<List<ConversationSnippet>>(
         stream: DbService.instance
-            .getConversationsSnippet(_auth.user.uid, _userSearch),
+            .getConversationsSnippet(_auth.user?.uid, _userSearch),
         builder: (_context, snapshot) {
           List<ConversationSnippet> data = snapshot.data;
 

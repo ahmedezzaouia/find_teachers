@@ -55,7 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.0,
       ),
-      body: StreamBuilder<Map<String, dynamic>>(
+      body: StreamBuilder(
           stream: DbService.instance.getUserData(_auth.user.uid),
           builder: (context, snapshot) {
             var data = snapshot.data;

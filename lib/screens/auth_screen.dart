@@ -151,6 +151,7 @@ class _AuthCardState extends State<AuthCard> {
       _showMessageDialog(errorMessage);
       print('catch error : ${error.toString()}');
     }
+    //Whether this State object is currently in a tree.
     if (this.mounted) {
       setState(() {
         isloading = false;

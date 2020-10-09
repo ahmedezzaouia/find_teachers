@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/teacher_detail_screem.dart';
+import '../screens/teacher_Profile.dart';
 import '../providers/teacher.dart';
 import 'package:provider/provider.dart';
 
@@ -9,14 +9,11 @@ class TeacherItem extends StatelessWidget {
     final teachData = Provider.of<Teacher>(context, listen: false);
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(
-          TeacherDetaillScreen.routeNamed,
-          arguments: {
-            'creatorId': teachData.creatorID,
-            'docId': teachData.id,
-            'isFavorite': teachData.isfavorite,
-          },
-        );
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (ctx) =>
+                    TeacherProfile(profileId: teachData.creatorID)));
       },
       child: Card(
         margin: EdgeInsets.all(10),
